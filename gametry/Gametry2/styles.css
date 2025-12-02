@@ -1,0 +1,132 @@
+:root {
+    --neon-blue: #00f3ff;
+    --neon-pink: #ff00ff;
+    --neon-purple: #9d00ff;
+    --dark-bg: #0a0a0f;
+    --glow-shadow: 0 0 10px rgba(0, 243, 255, 0.5),
+                  0 0 20px rgba(0, 243, 255, 0.3),
+                  0 0 30px rgba(0, 243, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--dark-bg);
+    font-family: 'Press Start 2P', cursive;
+    color: var(--neon-blue);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: 100vh;
+    max-height: 800px;
+    box-shadow: var(--glow-shadow);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#gameCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--dark-bg);
+}
+
+#ui-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    display: flex;
+    gap: 20px;
+    text-shadow: var(--glow-shadow);
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(10, 10, 15, 0.9);
+    z-index: 20;
+    gap: 2rem;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    font-size: 3rem;
+    color: var(--neon-pink);
+    text-shadow: var(--glow-shadow);
+    animation: pulse 2s infinite;
+}
+
+button {
+    background-color: transparent;
+    border: 2px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 1rem 2rem;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: var(--glow-shadow);
+}
+
+button:hover {
+    background-color: var(--neon-blue);
+    color: var(--dark-bg);
+    transform: scale(1.05);
+}
+
+@keyframes pulse {
+    0% {
+        text-shadow: var(--glow-shadow);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(0, 243, 255, 0.8),
+                     0 0 40px rgba(0, 243, 255, 0.6),
+                     0 0 60px rgba(0, 243, 255, 0.4);
+    }
+    100% {
+        text-shadow: var(--glow-shadow);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    button {
+        padding: 0.8rem 1.6rem;
+        font-size: 0.8rem;
+    }
+    
+    #ui-overlay {
+        font-size: 0.8rem;
+    }
+} 

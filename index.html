@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduardo Quinones - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+</head>
+<body>
+    <canvas id="space-canvas"></canvas>
+    <div class="loading-screen">
+        <div class="loading-container">
+            <div class="symbol-container"></div>
+        </div>
+    </div>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="#home">EQ</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero-section" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="name">Eduardo Quinones</span>
+                <span class="subtitle">Software Engineer</span>
+            </h1>
+            <div class="cta-buttons">
+                <a href="#projects" class="cta-button primary">
+                    <span>Explore My Projects</span>
+                    <i class="fas fa-arrow-down"></i>
+                </a>
+                <a href="resume.pdf" target="_blank" class="cta-button secondary">
+                    <span>View My Resume</span>
+                    <i class="fas fa-file-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="floating-elements">
+            <div class="floating-icon" data-aos="fade-up" data-aos-delay="100"><i class="fas fa-code"></i></div>
+            <div class="floating-icon" data-aos="fade-up" data-aos-delay="200"><i class="fas fa-rocket"></i></div>
+            <div class="floating-icon" data-aos="fade-up" data-aos-delay="300"><i class="fas fa-microchip"></i></div>
+        </div>
+        <video class="hero-video" autoplay muted loop>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-sunrise-over-the-sea-1180-large.mp4" type="video/mp4">
+        </video>
+    </header>
+
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <div class="about-image">
+                <img src="pictures/IMG_4607.jpeg" alt="Profile Image">
+            </div>
+            <div class="about-content">
+                <h2>About Me</h2>
+                <p>I'm a passionate Computer Science student with a deep love for creating elegant solutions. My journey in technology began with a curiosity about how things work, which has evolved into a dedication to building meaningful software that makes a difference.</p>
+                <p>When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or working on personal development initiatives that push the boundaries of what's possible.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects-section" id="projects">
+        <div class="projects-container">
+            <div class="projects-left">
+                <h2 class="projects-title">Featured Projects</h2>
+                <div class="projects-column">
+                    <div class="project-card">
+                        <div class="project-content">
+                            <h3>Instant Code Connect</h3>
+                            <p>Connects students and uses HTML, CSS & Script JS.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">HTML</span>
+                                <span class="tech-tag">CSS</span>
+                                <span class="tech-tag">JavaScript</span>
+                            </div>
+                            <a href="https://eddieeq7.github.io/InstantCodeConnect/" class="project-button" target="_blank" rel="noopener">
+                                <span>View Project</span>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-content">
+                            <h3>Neon Chase</h3>
+                            <p>A modern neon-styled 2D arcade car chase game with smooth controls, dynamic enemy AI, and beautiful particle effects. Built with vanilla JavaScript and HTML5 Canvas.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">HTML5 Canvas</span>
+                                <span class="tech-tag">Game Dev</span>
+                            </div>
+                            <a href="gametry/Gametry2/index.html" class="project-button" target="_blank">
+                                <span>Play Game</span>
+                                <i class="fas fa-gamepad"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="projects-right">
+                <div id="projects-3d-network"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="three-things">
+        <div class="things-container">
+            <h3 data-aos="fade-up">Three Things I Love</h3>
+            <div class="things-grid">
+                <div class="thing-item" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-code"></i>
+                    <h4>Clean Code</h4>
+                    <p>Writing elegant, maintainable solutions that stand the test of time.</p>
+                </div>
+                <div class="thing-item" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Space Tech</h4>
+                    <p>Exploring the intersection of software and space exploration.</p>
+                </div>
+                <div class="thing-item" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-users"></i>
+                    <h4>Open Source</h4>
+                    <p>Contributing to and learning from the global developer community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="skills-section" id="skills">
+        <div class="skills-hero">
+            <div class="skills-header">
+                <span class="skills-label">// MY EXPERTISE</span>
+                <h2 class="skills-title">
+                    <span class="gradient-text">Technical</span> Arsenal
+                </h2>
+                <p class="skills-description">
+                    Cutting-edge technologies powering modern solutions.
+                </p>
+            </div>
+            
+            <div class="tech-logos-grid">
+                <div class="tech-logo-card">
+                    <i class="devicon-python-plain colored"></i>
+                    <span>Python</span>
+                </div>
+                <div class="tech-logo-card">
+                    <i class="devicon-react-original colored"></i>
+                    <span>React</span>
+                </div>
+                <div class="tech-logo-card">
+                    <i class="devicon-typescript-plain colored"></i>
+                    <span>TypeScript</span>
+                </div>
+                <div class="tech-logo-card">
+                    <i class="devicon-nodejs-plain-wordmark colored"></i>
+                    <span>Node.js</span>
+                </div>
+                <div class="tech-logo-card">
+                    <i class="devicon-cplusplus-plain colored"></i>
+                    <span>C++</span>
+                </div>
+                <div class="tech-logo-card">
+                    <i class="devicon-javascript-plain colored"></i>
+                    <span>JavaScript</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="contact-container">
+            <h2>Get in Touch</h2>
+            <p class="contact-subtitle">Sail into the future with me</p>
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Eduardo Quinones. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="space-background.js"></script>
+    <script src="projects-sphere.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
