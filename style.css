@@ -1116,3 +1116,222 @@ body.loading {
         font-size: 0.9rem;
     }
 }
+
+/* Loading Animation */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #0a2540, #123456);
+    background-size: 200% 200%;
+    z-index: 9999;
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: animatedBackground 10s ease infinite;
+    pointer-events: all;
+    overflow: hidden;
+}
+
+@keyframes animatedBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-screen.removed {
+    display: none;
+}
+
+.loading-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.symbol-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.floating-symbol {
+    position: absolute;
+    font-family: 'Space Grotesk', monospace;
+    color: #00d9ff;
+    font-size: 1.2rem;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
+                 0 0 20px rgba(0, 217, 255, 0.2),
+                 0 0 30px rgba(0, 217, 255, 0.1);
+    will-change: transform, opacity;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.floating-symbol.visible {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.floating-symbol.fade-out {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(-50%, -50%) translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(-50%, -50%) translate(5px, -5px) rotate(1deg);
+    }
+    50% {
+        transform: translate(-50%, -50%) translate(-5px, 5px) rotate(-1deg);
+    }
+    75% {
+        transform: translate(-50%, -50%) translate(-5px, -5px) rotate(1deg);
+    }
+}
+
+/* Ensure main content is hidden during loading */
+body.loading {
+    overflow: hidden;
+}
+
+/* Ensure content is above particles */
+.skills-container,
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-nav {
+        padding: 1rem;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    .nav-link::after {
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+        width: 50%;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .skills-container h2 {
+        font-size: 2.2rem;
+    }
+
+    .experience-section h2 {
+        font-size: 2rem;
+    }
+
+    .highlights-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .highlight-card {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-nav {
+        padding: 0.8rem;
+    }
+
+    .logo a {
+        font-size: 1.8rem;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+    }
+
+    .skills-section {
+        padding: 4rem 1rem;
+    }
+
+    .experience-section {
+        padding: 3rem 1rem;
+    }
+
+    .highlight-card {
+        padding: 1rem;
+    }
+
+    .highlight-icon {
+        font-size: 1.25rem;
+    }
+
+    .highlight-card h3 {
+        font-size: 1rem;
+    }
+
+    .highlight-card p {
+        font-size: 0.85rem;
+    }
+}
