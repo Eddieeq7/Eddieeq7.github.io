@@ -1,222 +1,199 @@
-document.addEventListener('DOMContentLoaded', () => {
+/* ==========================================================================
+   Eduardo Quinones — portfolio
+   Small, dependency-free behaviours. Everything degrades to a readable page
+   if this file fails to load.
+   ========================================================================== */
+
+(() => {
+  "use strict";
+
+  const root = document.documentElement;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ---------- Theme ------------------------------------------------------ */
+
+  const STORE_KEY = "eq-theme";
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+  const toggle = document.querySelector("[data-theme-toggle]");
+  const themeLabel = document.querySelector("[data-theme-label]");
+
+  const read = () => {
     try {
-        const loadingScreen = document.querySelector('.loading-screen');
-        const loadingContainer = document.querySelector('.loading-container');
-        
-        if (!loadingScreen || !loadingContainer) {
-            console.error('Loading screen elements not found');
-            document.body.style.overflow = 'auto';
-            return;
-        }
-
-        let isTransitioning = false;
-        const symbols = [
-            // Mathematical symbols
-            '∑', '∫', '∏', '∞', '∂', '∇', '∆', '√', 'π', 'θ', 'φ', 'λ',
-            // Equations
-            'x² + y² = r²', '∫ f(x) dx', 'd/dx', 'lim x→∞', '∑(i=1 to n)',
-            '∇f(x,y)', '∂f/∂x', 'e^(iπ) + 1 = 0', 'f(x) = ax² + bx + c',
-            // Coding symbols
-            '{}', '</>', '() =>', 'class', 'const', 'let', 'import', 'export',
-            'for()', 'if()', 'while()', 'try{}', 'catch{}', 'async', 'await',
-            // Algorithm notations
-            'O(n)', 'O(log n)', 'O(n²)', 'DFS', 'BFS', 'hash()', 'sort()',
-            'map()', 'reduce()', 'filter()', 'push()', 'pop()', 'shift()'
-        ];
-
-        // Create symbol container
-        const symbolContainer = document.createElement('div');
-        symbolContainer.className = 'symbol-container';
-        loadingContainer.appendChild(symbolContainer);
-
-        // Add loading class to body
-        document.body.classList.add('loading');
-
-        // Function to calculate grid positions
-        function calculateGridPositions(count) {
-            const positions = [];
-            const gridSize = Math.ceil(Math.sqrt(count));
-            const cellSize = 100 / gridSize;
-            
-            for (let i = 0; i < count; i++) {
-                const row = Math.floor(i / gridSize);
-                const col = i % gridSize;
-                
-                // Add slight randomness to grid positions
-                const x = (col * cellSize) + (Math.random() * cellSize * 0.8);
-                const y = (row * cellSize) + (Math.random() * cellSize * 0.8);
-                
-                positions.push({ x, y });
-            }
-            
-            return positions;
-        }
-
-        function createSymbol(x, y, size, opacity) {
-            if (isTransitioning) return;
-
-            const symbol = document.createElement('div');
-            symbol.className = 'floating-symbol';
-            
-            symbol.style.left = `${x}%`;
-            symbol.style.top = `${y}%`;
-            symbol.style.fontSize = `${size}rem`;
-            symbol.style.opacity = opacity;
-            
-            symbolContainer.appendChild(symbol);
-            
-            // Initial fade in
-            requestAnimationFrame(() => {
-                symbol.classList.add('visible');
-                symbol.style.animation = `float ${3 + Math.random() * 2}s ease-in-out infinite`;
-            });
-
-            return symbol;
-        }
-
-        function updateSymbol(symbol) {
-            if (isTransitioning) return;
-
-            // Fade out current symbol
-            symbol.classList.remove('visible');
-            
-            // Update and fade in new symbol
-            setTimeout(() => {
-                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                symbol.classList.add('visible');
-            }, 300);
-        }
-
-        // Create initial symbols (3-5)
-        const initialSymbols = [];
-        const initialPositions = calculateGridPositions(4);
-        
-        initialPositions.forEach(pos => {
-            const size = 0.8 + Math.random() * 0.4;
-            const opacity = 0.6 + Math.random() * 0.4;
-            initialSymbols.push(createSymbol(pos.x, pos.y, size, opacity));
-        });
-
-        // After 1.5 seconds, create more symbols
-        setTimeout(() => {
-            const additionalPositions = calculateGridPositions(25);
-            const allSymbols = [...initialSymbols];
-            
-            additionalPositions.forEach(pos => {
-                const size = 0.6 + Math.random() * 0.6;
-                const opacity = 0.4 + Math.random() * 0.4;
-                allSymbols.push(createSymbol(pos.x, pos.y, size, opacity));
-            });
-
-            // Update symbols periodically
-            const updateInterval = setInterval(() => {
-                allSymbols.forEach(symbol => {
-                    if (Math.random() > 0.7) { // 30% chance to update each symbol
-                        updateSymbol(symbol);
-                    }
-                });
-            }, 400);
-
-            // Function to handle the fade out sequence
-            function startFadeOut() {
-                if (isTransitioning) return;
-                
-                isTransitioning = true;
-                clearInterval(updateInterval);
-                
-                // Add hidden class to start the fade out
-                loadingScreen.classList.add('hidden');
-                
-                // Remove the loading screen after the transition completes
-                setTimeout(() => {
-                    loadingScreen.classList.add('removed');
-                    document.body.classList.remove('loading');
-                    document.body.style.overflow = 'auto';
-                    
-                    // Clean up DOM
-                    loadingScreen.remove();
-                }, 1500);
-            }
-
-            // Start the fade out after 5 seconds
-            setTimeout(() => {
-                if (!isTransitioning) {
-                    startFadeOut();
-                }
-            }, 5000);
-
-            // Fallback: Remove loading screen if something goes wrong
-            setTimeout(() => {
-                if (!isTransitioning) {
-                    startFadeOut();
-                }
-            }, 10000);
-        }, 1500);
-
-        // Handle navigation active states
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-links a');
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.5
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${id}`) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            });
-        }, observerOptions);
-
-        sections.forEach(section => observer.observe(section));
-
-        // Smooth scrolling for navigation links
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
-                
-                if (targetSection) {
-                    window.scrollTo({
-                        top: targetSection.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Handle navbar scroll effect
-        const mainNav = document.querySelector('.main-nav');
-        let lastScroll = 0;
-
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            
-            if (currentScroll <= 0) {
-                mainNav.classList.remove('scrolled');
-            } else {
-                mainNav.classList.add('scrolled');
-            }
-            
-            lastScroll = currentScroll;
-        });
-
-        // 3D animations initialized via separate scripts
-    } catch (error) {
-        console.error('Error in loading animation:', error);
-        document.body.style.overflow = 'auto';
-        document.body.classList.remove('loading');
+      const v = localStorage.getItem(STORE_KEY);
+      return v === "light" || v === "dark" ? v : "auto";
+    } catch {
+      return "auto";
     }
-});
+  };
 
-// Old 2D Projects Neural Network removed - now using 3D sphere in projects-sphere.js 
+  const resolved = (pref) => (pref === "auto" ? (systemDark.matches ? "dark" : "light") : pref);
+
+  function applyTheme(pref) {
+    root.setAttribute("data-theme", pref);
+    // The label names what a click will do next, not the current state.
+    if (themeLabel) themeLabel.textContent = resolved(pref) === "dark" ? "Light" : "Dark";
+  }
+
+  applyTheme(read());
+
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      const next = resolved(read()) === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem(STORE_KEY, next);
+      } catch {
+        /* private mode — theme just won't persist */
+      }
+      applyTheme(next);
+    });
+  }
+
+  // Follow the OS only while the user hasn't picked a side.
+  systemDark.addEventListener("change", () => {
+    if (read() === "auto") applyTheme("auto");
+  });
+
+  /* ---------- Reveal on scroll ------------------------------------------- */
+
+  const revealables = document.querySelectorAll(".reveal");
+
+  if (reduceMotion.matches || !("IntersectionObserver" in window)) {
+    revealables.forEach((el) => el.classList.add("is-in"));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
+    );
+    revealables.forEach((el) => io.observe(el));
+
+    // Anything already on screen at load shouldn't wait for a scroll event.
+    requestAnimationFrame(() => {
+      revealables.forEach((el) => {
+        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-in");
+      });
+    });
+  }
+
+  /* ---------- Scroll progress + sticky topbar ---------------------------- */
+
+  const progress = document.querySelector(".scroll-progress span");
+  const topbar = document.querySelector(".topbar");
+  let ticking = false;
+
+  function onScroll() {
+    const y = window.scrollY;
+
+    if (progress) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.transform = `scaleX(${max > 0 ? Math.min(y / max, 1) : 0})`;
+    }
+    if (topbar) topbar.classList.toggle("is-stuck", y > 8);
+
+    ticking = false;
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(onScroll);
+    },
+    { passive: true }
+  );
+  onScroll();
+
+  /* ---------- Nav scrollspy ---------------------------------------------- */
+
+  const navLinks = Array.from(document.querySelectorAll(".topnav a[href^='#']"));
+  const sections = navLinks
+    .map((a) => document.querySelector(a.getAttribute("href")))
+    .filter(Boolean);
+
+  if (sections.length && "IntersectionObserver" in window) {
+    const spy = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const id = `#${entry.target.id}`;
+          navLinks.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === id));
+        });
+      },
+      // Band across the upper-middle of the viewport: whichever section sits
+      // there is the one being read.
+      { rootMargin: "-30% 0px -55% 0px" }
+    );
+    sections.forEach((s) => spy.observe(s));
+  }
+
+  /* ---------- Copy to clipboard ------------------------------------------ */
+
+  const toast = document.querySelector("[data-toast]");
+  let toastTimer;
+
+  function showToast(message) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2000);
+  }
+
+  async function copy(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Older Safari / non-secure contexts.
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:-1000px;opacity:0";
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try {
+        ok = document.execCommand("copy");
+      } catch {
+        ok = false;
+      }
+      ta.remove();
+      return ok;
+    }
+  }
+
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    const label = btn.querySelector("[data-copy-label]");
+    const original = label ? label.textContent : "";
+
+    btn.addEventListener("click", async () => {
+      const value = btn.getAttribute("data-copy");
+      const ok = await copy(value);
+
+      if (!ok) {
+        showToast("Couldn't copy — the address is " + value);
+        return;
+      }
+
+      btn.classList.add("is-copied");
+      if (label) label.textContent = "Copied";
+      showToast("Email address copied");
+
+      setTimeout(() => {
+        btn.classList.remove("is-copied");
+        if (label) label.textContent = original;
+      }, 1600);
+    });
+  });
+
+  /* ---------- Footer year ------------------------------------------------- */
+
+  const year = document.querySelector("[data-year]");
+  if (year) year.textContent = new Date().getFullYear();
+})();

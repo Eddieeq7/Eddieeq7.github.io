@@ -1,242 +1,325 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eduardo Quinones - Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eduardo Quinones — Software Engineer</title>
+<meta name="description" content="Computer science student building AI agent systems, signal-processing tools, and full-stack software. Selected work, in detail.">
+<meta name="author" content="Eduardo Quinones">
+<meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FBFAF8" media="(prefers-color-scheme: light)">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Eduardo Quinones — Software Engineer">
+<meta property="og:description" content="AI agent systems, signal processing, and full-stack software. Selected work, in detail.">
+<meta property="og:url" content="https://eddieeq7.github.io/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace'>EQ</text></svg>">
 </head>
 <body>
-    <canvas id="space-canvas"></canvas>
-    <div class="loading-screen">
-        <div class="loading-container">
-            <div class="symbol-container"></div>
-        </div>
-    </div>
 
-    <nav class="main-nav">
-        <div class="nav-container">
-            <div class="logo">
-                <a href="#home">EQ</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#skills" class="nav-link">Skills</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-        </div>
+<a class="skip-link" href="#work">Skip to work</a>
+<div class="scroll-progress" aria-hidden="true"><span></span></div>
+
+<header class="topbar">
+  <div class="shell topbar__inner">
+    <a class="mark" href="#top" aria-label="Eduardo Quinones, home">
+      <span class="mark__glyph">EQ</span>
+      <span class="mark__rule" aria-hidden="true"></span>
+    </a>
+    <nav class="topnav" aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#approach">Approach</a>
+      <a href="#stack">Stack</a>
+      <a href="#contact">Contact</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
+      <span class="theme-toggle__dot" aria-hidden="true"></span>
+      <span class="theme-toggle__label" data-theme-label>Dark</span>
+    </button>
+  </div>
+</header>
 
-    <header class="hero-section" id="home">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="name">Eduardo Quinones</span>
-                <span class="subtitle">Software Engineer</span>
-            </h1>
-            <div class="cta-buttons">
-                <a href="#projects" class="cta-button primary">
-                    <span>Explore My Projects</span>
-                    <i class="fas fa-arrow-down"></i>
-                </a>
-                <a href="resume.pdf" target="_blank" class="cta-button secondary">
-                    <span>View My Resume</span>
-                    <i class="fas fa-file-alt"></i>
-                </a>
-            </div>
-        </div>
-        <div class="hero-overlay"></div>
-        <div class="floating-elements">
-            <div class="floating-icon" data-aos="fade-up" data-aos-delay="100"><i class="fas fa-code"></i></div>
-            <div class="floating-icon" data-aos="fade-up" data-aos-delay="200"><i class="fas fa-rocket"></i></div>
-            <div class="floating-icon" data-aos="fade-up" data-aos-delay="300"><i class="fas fa-microchip"></i></div>
-        </div>
-        <video class="hero-video" autoplay muted loop>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-sunrise-over-the-sea-1180-large.mp4" type="video/mp4">
-        </video>
-    </header>
+<main id="top">
 
-    <section class="about-section" id="about">
-        <div class="about-container">
-            <div class="about-image">
-                <img src="pictures/IMG_4607.jpeg" alt="Profile Image">
-            </div>
-            <div class="about-content">
-                <h2>About Me</h2>
-                <p>I'm a passionate Computer Science student with a deep love for creating elegant solutions. My journey in technology began with a curiosity about how things work, which has evolved into a dedication to building meaningful software that makes a difference.</p>
-                <p>When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or working on personal development initiatives that push the boundaries of what's possible.</p>
-            </div>
-        </div>
-    </section>
+  <!-- ───────────────────────── HERO ───────────────────────── -->
+  <section class="hero">
+    <div class="shell">
+      <p class="eyebrow reveal">
+        <span class="pulse" aria-hidden="true"></span>
+        Open to Summer 2027 internships
+      </p>
 
-    <section class="projects-section" id="projects">
-        <div class="projects-container">
-            <div class="projects-left">
-                <h2 class="projects-title">Featured Projects</h2>
-                <div class="projects-column">
-                    <div class="project-card">
-                        <div class="project-content">
-                            <h3>Invoice MCP Reader Tool</h3>
-                            <p>An intelligent tool leveraging the Model Context Protocol (MCP) to parse, analyze, and extract data from invoices automatically. Streamlines financial workflows with high accuracy.</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">Python</span>
-                                <span class="tech-tag">MCP</span>
-                                <span class="tech-tag">AI</span>
-                            </div>
-                            <a href="invoice-tool.html" class="project-button" target="_blank">
-                                <span>Watch Demo</span>
-                                <i class="fas fa-play-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-content">
-                            <h3>Instant Code Connect</h3>
-                            <p>Connects students and uses HTML, CSS & Script JS.</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">HTML</span>
-                                <span class="tech-tag">CSS</span>
-                                <span class="tech-tag">JavaScript</span>
-                            </div>
-                            <a href="https://eddieeq7.github.io/InstantCodeConnect/" class="project-button" target="_blank" rel="noopener">
-                                <span>View Project</span>
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-content">
-                            <h3>Neon Chase</h3>
-                            <p>A modern neon-styled 2D arcade car chase game with smooth controls, dynamic enemy AI, and beautiful particle effects. Built with vanilla JavaScript and HTML5 Canvas.</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">HTML5 Canvas</span>
-                                <span class="tech-tag">Game Dev</span>
-                            </div>
-                            <a href="gametry/Gametry2/index.html" class="project-button" target="_blank">
-                                <span>Play Game</span>
-                                <i class="fas fa-gamepad"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="projects-right">
-                <div id="projects-3d-network"></div>
-            </div>
-        </div>
-    </section>
+      <h1 class="hero__name reveal">
+        Eduardo<br>Quinones<em>.</em>
+      </h1>
 
-    <div class="three-things">
-        <div class="things-container">
-            <h3 data-aos="fade-up">Three Things I Love</h3>
-            <div class="things-grid">
-                <div class="thing-item" data-aos="fade-up" data-aos-delay="100">
-                    <i class="fas fa-code"></i>
-                    <h4>Clean Code</h4>
-                    <p>Writing elegant, maintainable solutions that stand the test of time.</p>
-                </div>
-                <div class="thing-item" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fas fa-rocket"></i>
-                    <h4>Space Tech</h4>
-                    <p>Exploring the intersection of software and space exploration.</p>
-                </div>
-                <div class="thing-item" data-aos="fade-up" data-aos-delay="300">
-                    <i class="fas fa-users"></i>
-                    <h4>Open Source</h4>
-                    <p>Contributing to and learning from the global developer community.</p>
-                </div>
-            </div>
-        </div>
+      <div class="hero__grid">
+        <p class="hero__lede reveal">
+          I build <strong>AI agent systems</strong> that diagnose and act on real machines,
+          and low-level tools that move data where it shouldn't be able to go —
+          like text over a speaker and a microphone.
+          Computer science student, mostly writing Python, TypeScript, and Java.
+        </p>
+
+        <dl class="hero__facts reveal">
+          <div><dt>Focus</dt><dd>Agents · Systems · Full-stack</dd></div>
+          <div><dt>Based</dt><dd>United States</dd></div>
+          <div><dt>Now</dt><dd>Building AEGIS Desktop</dd></div>
+        </dl>
+      </div>
+
+      <div class="hero__actions reveal">
+        <a class="btn btn--primary" href="#work">
+          Selected work
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M3 9l5 5 5-5"/></svg>
+        </a>
+        <a class="btn" href="https://github.com/Eddieeq7" target="_blank" rel="noopener">
+          GitHub
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+        </a>
+        <button class="btn btn--ghost" type="button" data-copy="eddieq12371q@gmail.com">
+          <span data-copy-label>eddieq12371q@gmail.com</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 6h7v7H6zM3 10V3h7"/></svg>
+        </button>
+      </div>
     </div>
+    <div class="hero__ambient" aria-hidden="true"></div>
+  </section>
 
-    <section class="skills-section" id="skills">
-        <div class="skills-hero">
-            <div class="skills-header">
-                <h2 class="skills-title">Technical Skills</h2>
-                <p class="skills-description">
-                    Cutting-edge technologies powering modern solutions.
-                </p>
-            </div>
-            
-            <div class="tech-logos-grid">
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-python-plain colored"></i>
-                    </div>
-                    <span>Python</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-react-original colored"></i>
-                    </div>
-                    <span>React</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-typescript-plain colored"></i>
-                    </div>
-                    <span>TypeScript</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-nodejs-plain-wordmark colored"></i>
-                    </div>
-                    <span>Node.js</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-cplusplus-plain colored"></i>
-                    </div>
-                    <span>C++</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-javascript-plain colored"></i>
-                    </div>
-                    <span>JavaScript</span>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- ───────────────────────── WORK ───────────────────────── -->
+  <section class="section" id="work">
+    <div class="shell">
+      <div class="section__head reveal">
+        <h2 class="section__title">Selected work</h2>
+        <p class="section__note">Four projects, what each one actually does, and how.</p>
+      </div>
 
-    <section class="contact-section" id="contact">
-        <div class="contact-container">
-            <h2>Get in Touch</h2>
-            <p class="contact-subtitle">Sail into the future with me</p>
-            <form class="contact-form">
-                <div class="form-group">
-                    <input type="text" id="name" name="name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="email" name="email" placeholder="Your Email" required>
-                </div>
-                <div class="form-group">
-                    <textarea id="message" name="message" placeholder="Your Message" required></textarea>
-                </div>
-                <button type="submit" class="submit-button">Send Message</button>
-            </form>
-        </div>
-    </section>
+      <ol class="work">
 
-    <footer class="main-footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Eduardo Quinones. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
+        <li class="project reveal">
+          <div class="project__index"><span>01</span></div>
+          <div class="project__body">
+            <header class="project__head">
+              <h3 class="project__title">AEGIS Desktop</h3>
+              <p class="project__meta">Python · LLM agents · Windows internals · 2026</p>
+            </header>
+            <p class="project__lede">
+              A two-agent system that investigates why a Windows machine is slow, decides what to
+              do about it, then checks whether it actually worked.
+            </p>
+            <ul class="project__points">
+              <li><strong>Deep Investigator</strong> — probes process memory-growth rate, thread counts, network connections, disk, GPU, driver health, page file, and Event Log errors in parallel over a 5-second behavioral window (~8–10s total).</li>
+              <li><strong>Decision Engine</strong> — a three-phase loop: diagnose root cause first, plan tools with confidence scores, then re-probe and replan if the goal wasn't met.</li>
+              <li>The LLM is handed a different expert persona per intent — gaming specialist, performance diagnostician, storage specialist.</li>
+            </ul>
+            <div class="project__foot">
+              <ul class="chips">
+                <li>Python</li><li>Agentic loops</li><li>Tool use</li><li>System telemetry</li>
+              </ul>
+              <a class="link-arrow" href="https://github.com/Eddieeq7/AIAgentOS" target="_blank" rel="noopener">
+                Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+              </a>
             </div>
+          </div>
+        </li>
+
+        <li class="project reveal">
+          <div class="project__index"><span>02</span></div>
+          <div class="project__body">
+            <header class="project__head">
+              <h3 class="project__title">FSK Audio Modem</h3>
+              <p class="project__meta">Python · DSP · Computer Networks · 2026</p>
+            </header>
+            <p class="project__lede">
+              A software-defined modem that sends text through the air as sound — speaker on one
+              end, microphone on the other. No network stack, just physics.
+            </p>
+            <ul class="project__points">
+              <li>Binary frequency-shift keying: <code>0</code> → 1200 Hz, <code>1</code> → 2200 Hz, with an 800 Hz preamble carrier for synchronisation.</li>
+              <li>Built to explore the physical layer directly rather than read about it — demodulation, framing, and clock recovery all handled in software.</li>
+              <li>Written for a Computer Networks course, then pushed past the assignment.</li>
+            </ul>
+            <div class="project__foot">
+              <ul class="chips">
+                <li>Python</li><li>Signal processing</li><li>Modulation</li><li>Audio I/O</li>
+              </ul>
+              <a class="link-arrow" href="https://github.com/Eddieeq7/NoiseToDataProject" target="_blank" rel="noopener">
+                Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <li class="project reveal">
+          <div class="project__index"><span>03</span></div>
+          <div class="project__body">
+            <header class="project__head">
+              <h3 class="project__title">Invoice Reader</h3>
+              <p class="project__meta">Python · React · MCP · 2025</p>
+            </header>
+            <p class="project__lede">
+              Full-stack invoice processing with AI-powered extraction — upload a document, get
+              structured data back.
+            </p>
+            <ul class="project__points">
+              <li>Split cleanly into a React + Vite frontend and a Python backend, so neither side owns the other's problems.</li>
+              <li>Extraction runs through Model Context Protocol tools on the backend rather than one monolithic prompt.</li>
+              <li>Recorded demo below — the whole flow, start to finish.</li>
+            </ul>
+            <div class="project__foot">
+              <ul class="chips">
+                <li>Python</li><li>React</li><li>Vite</li><li>MCP</li>
+              </ul>
+              <div class="project__links">
+                <a class="link-arrow" href="invoice-tool.html">
+                  Demo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l6 4-6 4z"/></svg>
+                </a>
+                <a class="link-arrow" href="https://github.com/Eddieeq7/InvoiceReader" target="_blank" rel="noopener">
+                  Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="project reveal">
+          <div class="project__index"><span>04</span></div>
+          <div class="project__body">
+            <header class="project__head">
+              <h3 class="project__title">RentLuxFast</h3>
+              <p class="project__meta">Java · JavaFX · Maven · 2026</p>
+            </header>
+            <p class="project__lede">
+              A rental desktop application built to demonstrate all five OOP principles in
+              something you can actually click through.
+            </p>
+            <ul class="project__points">
+              <li>JavaFX UI on Java 21, dependency management handled entirely by Maven — <code>mvn javafx:run</code> and it's up.</li>
+              <li>Written as a class project, structured like a real one: the object model came first, the interface second.</li>
+            </ul>
+            <div class="project__foot">
+              <ul class="chips">
+                <li>Java 21</li><li>JavaFX</li><li>Maven</li><li>OOP</li>
+              </ul>
+              <a class="link-arrow" href="https://github.com/Eddieeq7/RentLuxFast" target="_blank" rel="noopener">
+                Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+              </a>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <p class="work__more reveal">
+        More on <a href="https://github.com/Eddieeq7?tab=repositories" target="_blank" rel="noopener">GitHub</a> —
+        a Spotify agent, a weather client, a note-posting service.
+      </p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── APPROACH ───────────────────────── -->
+  <section class="section section--tint" id="approach">
+    <div class="shell">
+      <div class="section__head reveal">
+        <h2 class="section__title">How I work</h2>
+        <p class="section__note">Three habits that show up in everything above.</p>
+      </div>
+
+      <div class="notes">
+        <article class="note reveal">
+          <p class="note__num">i</p>
+          <h3>Diagnose before acting</h3>
+          <p>AEGIS doesn't pick a fix until it has named a root cause, and it re-checks the machine afterward. Same instinct in debugging: the first plausible explanation is usually not the right one.</p>
+        </article>
+        <article class="note reveal">
+          <p class="note__num">ii</p>
+          <h3>Go one layer lower</h3>
+          <p>The modem project could have been a socket demo. Doing it in raw tones meant learning what a bit actually looks like when it leaves the machine — that knowledge doesn't expire.</p>
+        </article>
+        <article class="note reveal">
+          <p class="note__num">iii</p>
+          <h3>Draw the seams early</h3>
+          <p>Frontend and backend separated from the first commit on Invoice Reader; the object model before the UI on RentLuxFast. Boundaries are cheap up front and expensive later.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── STACK ───────────────────────── -->
+  <section class="section" id="stack">
+    <div class="shell">
+      <div class="section__head reveal">
+        <h2 class="section__title">Stack</h2>
+        <p class="section__note">What I reach for, grouped by what I use it for.</p>
+      </div>
+
+      <div class="stack">
+        <div class="stack__row reveal">
+          <h3>Languages</h3>
+          <ul><li>Python</li><li>TypeScript</li><li>JavaScript</li><li>Java</li><li>C++</li></ul>
         </div>
-    </footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="space-background.js"></script>
-    <script src="projects-sphere.js"></script>
-    <script src="script.js"></script>
+        <div class="stack__row reveal">
+          <h3>AI &amp; Agents</h3>
+          <ul><li>LLM tool use</li><li>Model Context Protocol</li><li>Multi-agent loops</li><li>Prompt design</li></ul>
+        </div>
+        <div class="stack__row reveal">
+          <h3>Web</h3>
+          <ul><li>React</li><li>Vite</li><li>Node.js</li><li>HTML &amp; CSS</li></ul>
+        </div>
+        <div class="stack__row reveal">
+          <h3>Systems &amp; Tools</h3>
+          <ul><li>Git</li><li>Maven</li><li>JavaFX</li><li>Audio DSP</li><li>Windows internals</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── CONTACT ───────────────────────── -->
+  <section class="section section--contact" id="contact">
+    <div class="shell">
+      <p class="eyebrow reveal">Contact</p>
+      <h2 class="contact__headline reveal">
+        Got something worth building<em>?</em>
+      </h2>
+      <p class="contact__lede reveal">
+        Internships, collaborations, or a question about any of the projects above —
+        email is the fastest way to reach me.
+      </p>
+      <div class="contact__actions reveal">
+        <a class="btn btn--primary btn--lg" href="mailto:eddieq12371q@gmail.com">
+          eddieq12371q@gmail.com
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+        </a>
+        <button class="btn btn--lg btn--ghost" type="button" data-copy="eddieq12371q@gmail.com">
+          <span data-copy-label>Copy address</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 6h7v7H6zM3 10V3h7"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="shell footer__inner">
+    <p>© <span data-year>2026</span> Eduardo Quinones</p>
+    <nav class="footer__links" aria-label="Elsewhere">
+      <a href="https://github.com/Eddieeq7" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:eddieq12371q@gmail.com">Email</a>
+      <!-- TODO(Eddie): add your LinkedIn URL here, then uncomment.
+      <a href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn</a> -->
+    </nav>
+    <p class="footer__built">Hand-written HTML &amp; CSS. No framework.</p>
+  </div>
+</footer>
+
+<div class="toast" data-toast role="status" aria-live="polite"></div>
+
+<script src="script.js" defer></script>
 </body>
 </html>
