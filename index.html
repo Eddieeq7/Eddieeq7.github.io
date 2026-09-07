@@ -1,325 +1,418 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="auto">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eduardo Quinones — Software Engineer</title>
-<meta name="description" content="Computer science student building AI agent systems, signal-processing tools, and full-stack software. Selected work, in detail.">
-<meta name="author" content="Eduardo Quinones">
-<meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#FBFAF8" media="(prefers-color-scheme: light)">
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="Eduardo Quinones — Software Engineer">
-<meta property="og:description" content="AI agent systems, signal processing, and full-stack software. Selected work, in detail.">
-<meta property="og:url" content="https://eddieeq7.github.io/">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace'>EQ</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduardo Quinones — Software Engineer</title>
+    
+    <!-- Google Fonts: JetBrains Mono (Tech Specs & Code), Space Grotesk (Modern Display), Inter (Body), Silkscreen (Pixel) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    
+    <link rel="stylesheet" href="style.css?v=5.2">
 </head>
 <body>
+    <!-- Top Navigation Bar -->
+    <header class="site-header">
+        <div class="nav-inner">
+            <a href="#hero" class="brand-logo" aria-label="Home">
+                <span class="brand-pixel">EQ8</span>
+            </a>
+            
+            <div class="nav-right">
+                <!-- Interactive Visitor Tap Counter -->
+                <button class="interaction-pill-btn" id="tapInteractionBtn" aria-label="Tap to interact with site counter">
+                    <span class="tap-sparkle">✨</span>
+                    <span class="tap-label">TAP HERE</span>
+                    <span class="tap-divider"></span>
+                    <span class="tap-badge" id="interactionCount">1,482</span>
+                </button>
 
-<a class="skip-link" href="#work">Skip to work</a>
-<div class="scroll-progress" aria-hidden="true"><span></span></div>
-
-<header class="topbar">
-  <div class="shell topbar__inner">
-    <a class="mark" href="#top" aria-label="Eduardo Quinones, home">
-      <span class="mark__glyph">EQ</span>
-      <span class="mark__rule" aria-hidden="true"></span>
-    </a>
-    <nav class="topnav" aria-label="Sections">
-      <a href="#work">Work</a>
-      <a href="#approach">Approach</a>
-      <a href="#stack">Stack</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
-      <span class="theme-toggle__dot" aria-hidden="true"></span>
-      <span class="theme-toggle__label" data-theme-label>Dark</span>
-    </button>
-  </div>
-</header>
-
-<main id="top">
-
-  <!-- ───────────────────────── HERO ───────────────────────── -->
-  <section class="hero">
-    <div class="shell">
-      <p class="eyebrow reveal">
-        <span class="pulse" aria-hidden="true"></span>
-        Open to Summer 2027 internships
-      </p>
-
-      <h1 class="hero__name reveal">
-        Eduardo<br>Quinones<em>.</em>
-      </h1>
-
-      <div class="hero__grid">
-        <p class="hero__lede reveal">
-          I build <strong>AI agent systems</strong> that diagnose and act on real machines,
-          and low-level tools that move data where it shouldn't be able to go —
-          like text over a speaker and a microphone.
-          Computer science student, mostly writing Python, TypeScript, and Java.
-        </p>
-
-        <dl class="hero__facts reveal">
-          <div><dt>Focus</dt><dd>Agents · Systems · Full-stack</dd></div>
-          <div><dt>Based</dt><dd>United States</dd></div>
-          <div><dt>Now</dt><dd>Building AEGIS Desktop</dd></div>
-        </dl>
-      </div>
-
-      <div class="hero__actions reveal">
-        <a class="btn btn--primary" href="#work">
-          Selected work
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M3 9l5 5 5-5"/></svg>
-        </a>
-        <a class="btn" href="https://github.com/Eddieeq7" target="_blank" rel="noopener">
-          GitHub
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
-        </a>
-        <button class="btn btn--ghost" type="button" data-copy="eddieq12371q@gmail.com">
-          <span data-copy-label>eddieq12371q@gmail.com</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 6h7v7H6zM3 10V3h7"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="hero__ambient" aria-hidden="true"></div>
-  </section>
-
-  <!-- ───────────────────────── WORK ───────────────────────── -->
-  <section class="section" id="work">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Selected work</h2>
-        <p class="section__note">Four projects, what each one actually does, and how.</p>
-      </div>
-
-      <ol class="work">
-
-        <li class="project reveal">
-          <div class="project__index"><span>01</span></div>
-          <div class="project__body">
-            <header class="project__head">
-              <h3 class="project__title">AEGIS Desktop</h3>
-              <p class="project__meta">Python · LLM agents · Windows internals · 2026</p>
-            </header>
-            <p class="project__lede">
-              A two-agent system that investigates why a Windows machine is slow, decides what to
-              do about it, then checks whether it actually worked.
-            </p>
-            <ul class="project__points">
-              <li><strong>Deep Investigator</strong> — probes process memory-growth rate, thread counts, network connections, disk, GPU, driver health, page file, and Event Log errors in parallel over a 5-second behavioral window (~8–10s total).</li>
-              <li><strong>Decision Engine</strong> — a three-phase loop: diagnose root cause first, plan tools with confidence scores, then re-probe and replan if the goal wasn't met.</li>
-              <li>The LLM is handed a different expert persona per intent — gaming specialist, performance diagnostician, storage specialist.</li>
-            </ul>
-            <div class="project__foot">
-              <ul class="chips">
-                <li>Python</li><li>Agentic loops</li><li>Tool use</li><li>System telemetry</li>
-              </ul>
-              <a class="link-arrow" href="https://github.com/Eddieeq7/AIAgentOS" target="_blank" rel="noopener">
-                Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
-              </a>
+                <span class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">AVAILABLE FOR WORK</span>
+                </span>
+                
+                <button class="menu-toggle-btn" id="menuToggle" aria-label="Open Navigation Drawer">
+                    <span class="menu-label">MENU</span>
+                    <div class="hamburger-lines">
+                        <span class="line"></span>
+                        <span class="line"></span>
+                    </div>
+                </button>
             </div>
-          </div>
-        </li>
+        </div>
+    </header>
 
-        <li class="project reveal">
-          <div class="project__index"><span>02</span></div>
-          <div class="project__body">
-            <header class="project__head">
-              <h3 class="project__title">FSK Audio Modem</h3>
-              <p class="project__meta">Python · DSP · Computer Networks · 2026</p>
-            </header>
-            <p class="project__lede">
-              A software-defined modem that sends text through the air as sound — speaker on one
-              end, microphone on the other. No network stack, just physics.
-            </p>
-            <ul class="project__points">
-              <li>Binary frequency-shift keying: <code>0</code> → 1200 Hz, <code>1</code> → 2200 Hz, with an 800 Hz preamble carrier for synchronisation.</li>
-              <li>Built to explore the physical layer directly rather than read about it — demodulation, framing, and clock recovery all handled in software.</li>
-              <li>Written for a Computer Networks course, then pushed past the assignment.</li>
-            </ul>
-            <div class="project__foot">
-              <ul class="chips">
-                <li>Python</li><li>Signal processing</li><li>Modulation</li><li>Audio I/O</li>
-              </ul>
-              <a class="link-arrow" href="https://github.com/Eddieeq7/NoiseToDataProject" target="_blank" rel="noopener">
-                Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
-              </a>
+    <main class="viewport-wrapper">
+        <!-- TOP SECTION: HERO & 3D WIREFRAME VISUAL -->
+        <section class="hero-panel" id="hero">
+            <div class="hero-inner">
+                <div class="hero-text-col">
+                    <div class="hero-badge-tag">// SOFTWARE ENGINEER &amp; CREATIVE TECH</div>
+                    <h1 class="hero-headline">
+                        <span>DEVELOPING</span>
+                        <span>BETTER</span>
+                        <span>SOFTWARE</span>
+                    </h1>
+                    <p class="hero-subtext">
+                        We develop clear, user-friendly and optimized applications. Specializing in AI-augmented workflows, web systems, and interactive tools.
+                    </p>
+                    
+                    <div class="hero-cta-group">
+                        <a href="#projects" class="btn-outline" id="heroBrowseProjectsBtn">
+                            <span>PROJECTS (02)</span>
+                            <span class="btn-arrow">↗</span>
+                        </a>
+                        <button class="btn-outline" id="heroExperienceBtn">
+                            <span>EXPERIENCE (02)</span>
+                            <span class="btn-arrow">↗</span>
+                        </button>
+                        <a href="eduardoquinones2027.pdf" target="_blank" class="btn-ghost">
+                            <span>RESUME</span>
+                            <span class="btn-arrow">↗</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-3d-col">
+                    <div class="canvas-wrapper">
+                        <canvas id="hero-3d-canvas"></canvas>
+                    </div>
+                </div>
             </div>
-          </div>
-        </li>
+        </section>
 
-        <li class="project reveal">
-          <div class="project__index"><span>03</span></div>
-          <div class="project__body">
-            <header class="project__head">
-              <h3 class="project__title">Invoice Reader</h3>
-              <p class="project__meta">Python · React · MCP · 2025</p>
-            </header>
-            <p class="project__lede">
-              Full-stack invoice processing with AI-powered extraction — upload a document, get
-              structured data back.
-            </p>
-            <ul class="project__points">
-              <li>Split cleanly into a React + Vite frontend and a Python backend, so neither side owns the other's problems.</li>
-              <li>Extraction runs through Model Context Protocol tools on the backend rather than one monolithic prompt.</li>
-              <li>Recorded demo below — the whole flow, start to finish.</li>
-            </ul>
-            <div class="project__foot">
-              <ul class="chips">
-                <li>Python</li><li>React</li><li>Vite</li><li>MCP</li>
-              </ul>
-              <div class="project__links">
-                <a class="link-arrow" href="invoice-tool.html">
-                  Demo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l6 4-6 4z"/></svg>
+        <!-- SUBTLE HORIZONTAL STATUS DIVIDER -->
+        <div class="grid-divider">
+            <div class="divider-line"></div>
+            <div class="divider-coords">
+                <span>LAT: 29.7604° N</span>
+                <span class="divider-center" id="dividerStatusText">INDEX // 02 PROJECTS · 02 ROLES LOADED</span>
+                <span>SYS_READY // OK</span>
+            </div>
+        </div>
+
+        <!-- BOTTOM SECTION: RECENTLY RELEASED SPEC SHEET & SWITCHER -->
+        <section class="showcase-panel" id="projects">
+            <div class="showcase-inner">
+                <!-- Vertical Rotated Label -->
+                <div class="vertical-label-col">
+                    <span class="vertical-text" id="verticalPanelLabel">RECENTLY RELEASED</span>
+                </div>
+
+                <!-- Featured Project / Experience Card Content -->
+                <div class="project-card-container">
+                    <!-- Mode Switcher Tabs & Shuffle Action -->
+                    <div class="showcase-ctrl-bar">
+                        <div class="showcase-tabs">
+                            <button class="showcase-tab active" id="tabProjectsBtn" data-mode="projects" type="button">
+                                <span class="tab-indicator"></span>
+                                <span>PROJECTS (02)</span>
+                            </button>
+                            <button class="showcase-tab" id="tabExperienceBtn" data-mode="experience" type="button">
+                                <span class="tab-indicator"></span>
+                                <span>WORK EXPERIENCE (02)</span>
+                            </button>
+                        </div>
+                        <button class="shuffle-btn" id="shuffleActionBtn" type="button" title="Shuffle displayed item">
+                            <span class="shuffle-spin-icon">⟳</span>
+                            <span>SHUFFLE</span>
+                        </button>
+                    </div>
+
+                    <div class="showcase-flex-row">
+                        <!-- Project Media / Thumbnail -->
+                        <div class="project-media-box">
+                            <div class="media-frame">
+                                <img id="projectImage" src="pictures/invoice-tool.jpg" alt="Invoice MCP Reader Tool">
+                                <div class="media-corner corner-tl"></div>
+                                <div class="media-corner corner-br"></div>
+                                <div class="media-tag" id="projectMediaTag">AI / MCP PROTOCOL</div>
+                            </div>
+                        </div>
+
+                        <!-- Specifications & Metadata -->
+                        <div class="project-details-box">
+                            <div class="project-header-row">
+                                <h2 class="project-title" id="projectTitle">INVOICE MCP READER</h2>
+                                <div class="project-nav-controls">
+                                    <button class="p-nav-btn" id="prevProjectBtn" aria-label="Previous item">←</button>
+                                    <span class="p-nav-counter" id="projectCounter">01 / 02</span>
+                                    <button class="p-nav-btn" id="nextProjectBtn" aria-label="Next item">→</button>
+                                </div>
+                            </div>
+
+                            <div class="title-underline"></div>
+
+                            <!-- Technical Specs Grid -->
+                            <div class="spec-list">
+                                <div class="spec-item">
+                                    <div class="spec-icon">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                            <polyline points="2 17 12 22 22 17"></polyline>
+                                            <polyline points="2 12 12 17 22 12"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="spec-content">
+                                        <span class="spec-key" id="specKey1">Platform:</span>
+                                        <span class="spec-val" id="specPlatform">Python, Claude AI, macOS / Linux</span>
+                                    </div>
+                                </div>
+
+                                <div class="spec-item">
+                                    <div class="spec-icon">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="spec-content">
+                                        <span class="spec-key" id="specKey2">Type:</span>
+                                        <span class="spec-val" id="specType">AI Automation Tool / Agent Protocol</span>
+                                    </div>
+                                </div>
+
+                                <div class="spec-item">
+                                    <div class="spec-icon">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                            <polyline points="16 18 22 12 16 6"></polyline>
+                                            <polyline points="8 6 2 12 8 18"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="spec-content">
+                                        <span class="spec-key" id="specKey3">Format:</span>
+                                        <span class="spec-val" id="specFormat">MCP Server, CLI, Automated Parser</span>
+                                    </div>
+                                </div>
+
+                                <div class="spec-item">
+                                    <div class="spec-icon">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="spec-content">
+                                        <span class="spec-key" id="specKey4">Description:</span>
+                                        <span class="spec-val" id="specDesc">An intelligent tool leveraging the Model Context Protocol (MCP) to parse, analyze, and extract structured financial data from invoices automatically with zero manual effort.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <!-- Action Buttons -->
+                        <div class="project-actions-row">
+                            <a href="invoice-tool.html" target="_blank" class="btn-solid" id="projectPrimaryLink">
+                                <span id="projectPrimaryText">WATCH DEMO</span>
+                                <span class="btn-arrow">↗</span>
+                            </a>
+                            <button class="btn-text" id="openQuickDetailsBtn">
+                                <span>DETAILED INFORMATION</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Right Edge Cassette / Blueprint SVG Wireframe -->
+                <div class="right-blueprint-decoration" aria-hidden="true">
+                    <svg viewBox="0 0 200 400" width="150" height="300" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none">
+                        <!-- Cassette / Tech Outline -->
+                        <rect x="10" y="10" width="180" height="380" rx="14" stroke="rgba(255,255,255,0.3)"/>
+                        <circle cx="30" cy="30" r="6" />
+                        <circle cx="170" cy="30" r="6" />
+                        <circle cx="30" cy="370" r="6" />
+                        <circle cx="170" cy="370" r="6" />
+                        <!-- Inner cassette window -->
+                        <rect x="35" y="80" width="130" height="150" rx="8"/>
+                        <!-- Reels -->
+                        <circle cx="70" cy="155" r="22" stroke-dasharray="3 3"/>
+                        <circle cx="70" cy="155" r="10" />
+                        <circle cx="130" cy="155" r="22" stroke-dasharray="3 3"/>
+                        <circle cx="130" cy="155" r="10" />
+                        <line x1="70" y1="133" x2="130" y2="133" />
+                        <line x1="70" y1="177" x2="130" y2="177" />
+                        <!-- Tape head guide -->
+                        <polygon points="50,230 150,230 135,280 65,280" />
+                        <circle cx="80" cy="255" r="5" />
+                        <circle cx="120" cy="255" r="5" />
+                        <!-- Calibrations -->
+                        <line x1="35" y1="310" x2="165" y2="310" stroke-dasharray="4 2"/>
+                        <line x1="35" y1="320" x2="165" y2="320" stroke-dasharray="2 4"/>
+                        <line x1="35" y1="340" x2="90" y2="340" />
+                        <line x1="110" y1="340" x2="165" y2="340" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- SLIDE-OUT CYBERPUNK NAVIGATION DRAWER (ABOUT, SKILLS, CONTACT) -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="side-drawer" id="sideDrawer" aria-hidden="true">
+        <div class="drawer-header">
+            <div class="drawer-title-box">
+                <span class="drawer-pixel-tag">// PROFILE &amp; SPECS</span>
+                <h3>EDUARDO QUINONES</h3>
+            </div>
+            <button class="drawer-close-btn" id="drawerClose" aria-label="Close drawer">
+                <span>CLOSE [X]</span>
+            </button>
+        </div>
+
+        <div class="drawer-body">
+            <!-- Profile Info -->
+            <div class="drawer-section">
+                <div class="profile-card">
+                    <img src="pictures/IMG_4607.jpeg" alt="Eduardo Quinones" class="profile-avatar">
+                    <div class="profile-meta">
+                        <h4>Eduardo Quinones</h4>
+                        <p class="role-badge">Computer Science &amp; Software Engineering</p>
+                        <p class="profile-bio">
+                            Passionate software engineer focused on building clean, resilient, and optimized software. Deeply interested in AI agent ecosystems, backend architectures, and high-performance interactive interfaces.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Skills Section -->
+            <div class="drawer-section">
+                <h4 class="section-heading">// CORE TECHNOLOGIES</h4>
+                <div class="skills-tag-grid">
+                    <div class="skill-pill">
+                        <i class="devicon-python-plain colored"></i>
+                        <span>Python</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-cplusplus-plain colored"></i>
+                        <span>C++</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-react-original colored"></i>
+                        <span>React</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-typescript-plain colored"></i>
+                        <span>TypeScript</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-nodejs-plain colored"></i>
+                        <span>Node.js</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-javascript-plain colored"></i>
+                        <span>JavaScript</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-html5-plain colored"></i>
+                        <span>HTML5 Canvas</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-threejs-original colored"></i>
+                        <span>Three.js</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="fas fa-robot"></i>
+                        <span>MCP / AI Agents</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Experience Deck & Shuffler in Drawer -->
+            <div class="drawer-section">
+                <div class="drawer-section-header">
+                    <h4 class="section-heading">// WORK EXPERIENCE</h4>
+                    <button class="drawer-shuffle-btn" id="drawerShuffleExpBtn" type="button" title="Shuffle experience">
+                        <span>⟳ SHUFFLE</span>
+                    </button>
+                </div>
+                <div class="drawer-experience-box" id="drawerExpBox">
+                    <div class="drawer-exp-header">
+                        <span class="drawer-exp-company" id="drawerExpCompany">OASIS</span>
+                        <span class="drawer-exp-tag" id="drawerExpTag">CURRENT // ACTIVE</span>
+                    </div>
+                    <div class="drawer-exp-role" id="drawerExpRole">Software Engineer</div>
+                    <div class="drawer-exp-period" id="drawerExpPeriod">Sept 2024 — Present</div>
+                    <p class="drawer-exp-desc" id="drawerExpDesc">
+                        Engineering production software systems and backend services at Oasis. Developing high-reliability web tools, optimizing data pipelines, and implementing modern architectural solutions.
+                    </p>
+                    <div class="drawer-exp-tech" id="drawerExpTech">
+                        <span>Python</span>
+                        <span>Full-Stack</span>
+                        <span>REST APIs</span>
+                        <span>Cloud</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Direct Contact Form -->
+            <div class="drawer-section">
+                <h4 class="section-heading">// TRANSMIT MESSAGE</h4>
+                <div class="inquiry-info-box">
+                    <span>DIRECT INQUIRIES ROUTED TO:</span>
+                    <a href="mailto:eduardoq123q@gmail.com" class="inquiry-email-link">eduardoq123q@gmail.com</a>
+                </div>
+                <form class="contact-terminal-form" id="contactForm">
+                    <div class="form-row">
+                        <label for="contactName">NAME</label>
+                        <input type="text" id="contactName" placeholder="e.g. Alex Mercer" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="contactEmail">EMAIL</label>
+                        <input type="email" id="contactEmail" placeholder="e.g. alex@example.com" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="contactMessage">MESSAGE</label>
+                        <textarea id="contactMessage" rows="3" placeholder="Brief project summary or inquiry..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-solid btn-full">
+                        <span>TRANSMIT TO EDUARDOQ123Q@GMAIL.COM</span>
+                        <span class="btn-arrow">↗</span>
+                    </button>
+                    <div class="form-status" id="formStatus"></div>
+                </form>
+            </div>
+
+            <!-- Social / Quick Links -->
+            <div class="drawer-section drawer-footer-links">
+                <a href="https://github.com/Eddieeq7" target="_blank" rel="noopener">
+                    <i class="fab fa-github"></i> GITHUB
                 </a>
-                <a class="link-arrow" href="https://github.com/Eddieeq7/InvoiceReader" target="_blank" rel="noopener">
-                  Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
+                <a href="https://www.linkedin.com/in/eduardo-quinones-20b36934a/" target="_blank" rel="noopener">
+                    <i class="fab fa-linkedin"></i> LINKEDIN
                 </a>
-              </div>
+                <a href="mailto:eduardoq123q@gmail.com">
+                    <i class="fas fa-envelope"></i> EMAIL
+                </a>
+                <a href="eduardoquinones2027.pdf" target="_blank">
+                    <i class="fas fa-file-pdf"></i> RESUME
+                </a>
             </div>
-          </div>
-        </li>
-
-        <li class="project reveal">
-          <div class="project__index"><span>04</span></div>
-          <div class="project__body">
-            <header class="project__head">
-              <h3 class="project__title">RentLuxFast</h3>
-              <p class="project__meta">Java · JavaFX · Maven · 2026</p>
-            </header>
-            <p class="project__lede">
-              A rental desktop application built to demonstrate all five OOP principles in
-              something you can actually click through.
-            </p>
-            <ul class="project__points">
-              <li>JavaFX UI on Java 21, dependency management handled entirely by Maven — <code>mvn javafx:run</code> and it's up.</li>
-              <li>Written as a class project, structured like a real one: the object model came first, the interface second.</li>
-            </ul>
-            <div class="project__foot">
-              <ul class="chips">
-                <li>Java 21</li><li>JavaFX</li><li>Maven</li><li>OOP</li>
-              </ul>
-              <a class="link-arrow" href="https://github.com/Eddieeq7/RentLuxFast" target="_blank" rel="noopener">
-                Source <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
-              </a>
-            </div>
-          </div>
-        </li>
-
-      </ol>
-
-      <p class="work__more reveal">
-        More on <a href="https://github.com/Eddieeq7?tab=repositories" target="_blank" rel="noopener">GitHub</a> —
-        a Spotify agent, a weather client, a note-posting service.
-      </p>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── APPROACH ───────────────────────── -->
-  <section class="section section--tint" id="approach">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">How I work</h2>
-        <p class="section__note">Three habits that show up in everything above.</p>
-      </div>
-
-      <div class="notes">
-        <article class="note reveal">
-          <p class="note__num">i</p>
-          <h3>Diagnose before acting</h3>
-          <p>AEGIS doesn't pick a fix until it has named a root cause, and it re-checks the machine afterward. Same instinct in debugging: the first plausible explanation is usually not the right one.</p>
-        </article>
-        <article class="note reveal">
-          <p class="note__num">ii</p>
-          <h3>Go one layer lower</h3>
-          <p>The modem project could have been a socket demo. Doing it in raw tones meant learning what a bit actually looks like when it leaves the machine — that knowledge doesn't expire.</p>
-        </article>
-        <article class="note reveal">
-          <p class="note__num">iii</p>
-          <h3>Draw the seams early</h3>
-          <p>Frontend and backend separated from the first commit on Invoice Reader; the object model before the UI on RentLuxFast. Boundaries are cheap up front and expensive later.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── STACK ───────────────────────── -->
-  <section class="section" id="stack">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Stack</h2>
-        <p class="section__note">What I reach for, grouped by what I use it for.</p>
-      </div>
-
-      <div class="stack">
-        <div class="stack__row reveal">
-          <h3>Languages</h3>
-          <ul><li>Python</li><li>TypeScript</li><li>JavaScript</li><li>Java</li><li>C++</li></ul>
         </div>
-        <div class="stack__row reveal">
-          <h3>AI &amp; Agents</h3>
-          <ul><li>LLM tool use</li><li>Model Context Protocol</li><li>Multi-agent loops</li><li>Prompt design</li></ul>
+    </aside>
+
+    <!-- Modal for Detailed Project Information -->
+    <div class="modal-backdrop" id="projectModalBackdrop"></div>
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="modalProjectTitle">PROJECT DETAILS</h3>
+            <button class="modal-close-btn" id="modalCloseBtn">[ESC / CLOSE]</button>
         </div>
-        <div class="stack__row reveal">
-          <h3>Web</h3>
-          <ul><li>React</li><li>Vite</li><li>Node.js</li><li>HTML &amp; CSS</li></ul>
+        <div class="modal-content" id="modalProjectContent">
+            <!-- Dynamic Content Injected -->
         </div>
-        <div class="stack__row reveal">
-          <h3>Systems &amp; Tools</h3>
-          <ul><li>Git</li><li>Maven</li><li>JavaFX</li><li>Audio DSP</li><li>Windows internals</li></ul>
-        </div>
-      </div>
     </div>
-  </section>
 
-  <!-- ───────────────────────── CONTACT ───────────────────────── -->
-  <section class="section section--contact" id="contact">
-    <div class="shell">
-      <p class="eyebrow reveal">Contact</p>
-      <h2 class="contact__headline reveal">
-        Got something worth building<em>?</em>
-      </h2>
-      <p class="contact__lede reveal">
-        Internships, collaborations, or a question about any of the projects above —
-        email is the fastest way to reach me.
-      </p>
-      <div class="contact__actions reveal">
-        <a class="btn btn--primary btn--lg" href="mailto:eddieq12371q@gmail.com">
-          eddieq12371q@gmail.com
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5"/></svg>
-        </a>
-        <button class="btn btn--lg btn--ghost" type="button" data-copy="eddieq12371q@gmail.com">
-          <span data-copy-label>Copy address</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 6h7v7H6zM3 10V3h7"/></svg>
-        </button>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="footer">
-  <div class="shell footer__inner">
-    <p>© <span data-year>2026</span> Eduardo Quinones</p>
-    <nav class="footer__links" aria-label="Elsewhere">
-      <a href="https://github.com/Eddieeq7" target="_blank" rel="noopener">GitHub</a>
-      <a href="mailto:eddieq12371q@gmail.com">Email</a>
-      <!-- TODO(Eddie): add your LinkedIn URL here, then uncomment.
-      <a href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn</a> -->
-    </nav>
-    <p class="footer__built">Hand-written HTML &amp; CSS. No framework.</p>
-  </div>
-</footer>
-
-<div class="toast" data-toast role="status" aria-live="polite"></div>
-
-<script src="script.js" defer></script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="wireframe-hero.js?v=5.2"></script>
+    <script src="script.js?v=5.2"></script>
 </body>
 </html>
