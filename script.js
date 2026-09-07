@@ -1,222 +1,294 @@
+// ===================================================================
+// EDUARDO QUINONES — PORTFOLIO SCRIPT
+// Interactive project switcher, 3D Hero Scene, Cyberpunk Drawer, Modal
+// ===================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
+    // ---------------------------------------------------------------
+    // 1. INITIALIZE 3D WIREFRAME HERO SCENE
+    // ---------------------------------------------------------------
     try {
-        const loadingScreen = document.querySelector('.loading-screen');
-        const loadingContainer = document.querySelector('.loading-container');
-        
-        if (!loadingScreen || !loadingContainer) {
-            console.error('Loading screen elements not found');
-            document.body.style.overflow = 'auto';
-            return;
+        if (window.WireframeHeroScene) {
+            new window.WireframeHeroScene('hero-3d-canvas');
         }
+    } catch (err) {
+        console.warn('3D Wireframe Scene initialization notice:', err);
+    }
 
-        let isTransitioning = false;
-        const symbols = [
-            // Mathematical symbols
-            '∑', '∫', '∏', '∞', '∂', '∇', '∆', '√', 'π', 'θ', 'φ', 'λ',
-            // Equations
-            'x² + y² = r²', '∫ f(x) dx', 'd/dx', 'lim x→∞', '∑(i=1 to n)',
-            '∇f(x,y)', '∂f/∂x', 'e^(iπ) + 1 = 0', 'f(x) = ax² + bx + c',
-            // Coding symbols
-            '{}', '</>', '() =>', 'class', 'const', 'let', 'import', 'export',
-            'for()', 'if()', 'while()', 'try{}', 'catch{}', 'async', 'await',
-            // Algorithm notations
-            'O(n)', 'O(log n)', 'O(n²)', 'DFS', 'BFS', 'hash()', 'sort()',
-            'map()', 'reduce()', 'filter()', 'push()', 'pop()', 'shift()'
-        ];
+    // ---------------------------------------------------------------
+    // 2. PROJECT DATA & SWITCHER LOGIC
+    // ---------------------------------------------------------------
+    const projects = [
+        {
+            title: "INVOICE MCP READER",
+            tag: "AI / MCP PROTOCOL",
+            image: "pictures/invoice-tool.jpg",
+            fit: "cover",
+            position: "center top",
+            platform: "Python, Claude AI, macOS / Linux",
+            type: "AI Automation Tool / Agent Protocol",
+            format: "MCP Server, Automated Data Extraction",
+            description: "An intelligent tool leveraging the Model Context Protocol (MCP) to parse, analyze, and extract structured financial data from invoices automatically with zero manual effort.",
+            primaryLink: "invoice-tool.html",
+            primaryText: "WATCH DEMO",
+            detailsHtml: `
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// INVOICE MCP READER TOOL</h4>
+                <p style="margin-bottom: 1rem;">An intelligent developer tool engineered to connect Large Language Models directly to structured financial documents using Anthropic's Model Context Protocol (MCP).</p>
+                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem;">
+                    <div>> Architecture: Custom Python MCP Server</div>
+                    <div>> Capabilities: OCR parsing, line-item extraction, table structuring</div>
+                    <div>> Integration: Claude Desktop, autonomous coding agents</div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem;">Streamlines accounts payable workflows by converting messy PDF/image invoices into clean JSON schemas for instant accounting software import.</p>
+                <div style="margin-top: 1.4rem;">
+                    <a href="invoice-tool.html" target="_blank" class="btn-solid" style="display: inline-flex;">
+                        <span>OPEN FULL VIDEO DEMO</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                </div>
+            `
+        },
+        {
+            title: "NEON CHASE",
+            tag: "GAME / CANVAS 2D",
+            image: "pictures/Game.jpeg",
+            fit: "contain",
+            position: "center center",
+            platform: "HTML5 Canvas, Vanilla JavaScript, Web Audio API",
+            type: "2D Cyber Arcade Game / AI Enemy Agents",
+            format: "Interactive Browser Game (60+ FPS)",
+            description: "A fast-paced neon-styled 2D arcade car chase game featuring responsive keyboard controls, dynamic pursuit pathfinding AI, particle sparks, and physics-based collisions.",
+            primaryLink: "gametry/Gametry2/index.html",
+            primaryText: "PLAY GAME",
+            detailsHtml: `
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// NEON CHASE: 2D CYBER ARCADE</h4>
+                <p style="margin-bottom: 1rem;">An arcade survival racing experience built from scratch without external game engines, leveraging raw HTML5 Canvas and optimized delta-time rendering.</p>
+                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem;">
+                    <div>> Controls: Arrow Keys / WASD for responsive drift steering</div>
+                    <div>> Enemy AI: Vector mathematics for dynamic pursuit and interception</div>
+                    <div>> Visuals: Real-time particle emitter for neon exhaust and crash FX</div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem;">Play directly in your browser with instant zero-install load times.</p>
+                <div style="margin-top: 1.4rem;">
+                    <a href="gametry/Gametry2/index.html" target="_blank" class="btn-solid" style="display: inline-flex;">
+                        <span>LAUNCH NEON CHASE</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                </div>
+            `
+        },
+        {
+            title: "INSTANT CODE CONNECT",
+            tag: "COLLAB / WEB APP",
+            image: "pictures/code.jpeg",
+            fit: "cover",
+            position: "center top",
+            platform: "JavaScript, HTML5, CSS3, GitHub Pages",
+            type: "Peer Collaboration Platform / Dev Community",
+            format: "Interactive Single-Page Application",
+            description: "Peer-to-peer coding collaboration and resource portal designed for computer science students to share technical solutions, exchange snippets, and solve algorithmic challenges.",
+            primaryLink: "https://eddieeq7.github.io/InstantCodeConnect/",
+            primaryText: "LAUNCH APP",
+            detailsHtml: `
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// INSTANT CODE CONNECT</h4>
+                <p style="margin-bottom: 1rem;">Created to remove barriers between computer science students learning algorithms and web development.</p>
+                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem;">
+                    <div>> UI Design: High-contrast intuitive interface</div>
+                    <div>> Features: Code snippet organization, collaborative problem sets</div>
+                    <div>> Deployment: GitHub Pages continuous delivery</div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem;">Explore the live deployment to see student networking in action.</p>
+                <div style="margin-top: 1.4rem;">
+                    <a href="https://eddieeq7.github.io/InstantCodeConnect/" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
+                        <span>VISIT LIVE APP</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                </div>
+            `
+        }
+    ];
 
-        // Create symbol container
-        const symbolContainer = document.createElement('div');
-        symbolContainer.className = 'symbol-container';
-        loadingContainer.appendChild(symbolContainer);
+    let currentProjectIndex = 0;
 
-        // Add loading class to body
-        document.body.classList.add('loading');
+    const projectTitle = document.getElementById('projectTitle');
+    const projectMediaTag = document.getElementById('projectMediaTag');
+    const projectImage = document.getElementById('projectImage');
+    const mediaFrame = document.querySelector('.media-frame');
+    const specPlatform = document.getElementById('specPlatform');
+    const specType = document.getElementById('specType');
+    const specFormat = document.getElementById('specFormat');
+    const specDesc = document.getElementById('specDesc');
+    const projectCounter = document.getElementById('projectCounter');
+    const projectPrimaryLink = document.getElementById('projectPrimaryLink');
+    const projectPrimaryText = document.getElementById('projectPrimaryText');
+    const prevBtn = document.getElementById('prevProjectBtn');
+    const nextBtn = document.getElementById('nextProjectBtn');
 
-        // Function to calculate grid positions
-        function calculateGridPositions(count) {
-            const positions = [];
-            const gridSize = Math.ceil(Math.sqrt(count));
-            const cellSize = 100 / gridSize;
-            
-            for (let i = 0; i < count; i++) {
-                const row = Math.floor(i / gridSize);
-                const col = i % gridSize;
-                
-                // Add slight randomness to grid positions
-                const x = (col * cellSize) + (Math.random() * cellSize * 0.8);
-                const y = (row * cellSize) + (Math.random() * cellSize * 0.8);
-                
-                positions.push({ x, y });
+    if (mediaFrame) {
+        mediaFrame.style.cursor = 'pointer';
+        mediaFrame.title = 'Click to open project';
+        mediaFrame.addEventListener('click', () => {
+            const current = projects[currentProjectIndex];
+            if (current && current.primaryLink) {
+                window.open(current.primaryLink, '_blank');
             }
-            
-            return positions;
-        }
-
-        function createSymbol(x, y, size, opacity) {
-            if (isTransitioning) return;
-
-            const symbol = document.createElement('div');
-            symbol.className = 'floating-symbol';
-            
-            symbol.style.left = `${x}%`;
-            symbol.style.top = `${y}%`;
-            symbol.style.fontSize = `${size}rem`;
-            symbol.style.opacity = opacity;
-            
-            symbolContainer.appendChild(symbol);
-            
-            // Initial fade in
-            requestAnimationFrame(() => {
-                symbol.classList.add('visible');
-                symbol.style.animation = `float ${3 + Math.random() * 2}s ease-in-out infinite`;
-            });
-
-            return symbol;
-        }
-
-        function updateSymbol(symbol) {
-            if (isTransitioning) return;
-
-            // Fade out current symbol
-            symbol.classList.remove('visible');
-            
-            // Update and fade in new symbol
-            setTimeout(() => {
-                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                symbol.classList.add('visible');
-            }, 300);
-        }
-
-        // Create initial symbols (3-5)
-        const initialSymbols = [];
-        const initialPositions = calculateGridPositions(4);
-        
-        initialPositions.forEach(pos => {
-            const size = 0.8 + Math.random() * 0.4;
-            const opacity = 0.6 + Math.random() * 0.4;
-            initialSymbols.push(createSymbol(pos.x, pos.y, size, opacity));
         });
+    }
 
-        // After 1.5 seconds, create more symbols
+    function updateProjectDisplay(index, direction = 'next') {
+        currentProjectIndex = index;
+        const project = projects[index];
+
+        // Animate elements with quick opacity transition
+        const cardBox = document.querySelector('.project-card-container');
+        if (cardBox) {
+            cardBox.style.opacity = '0.3';
+            cardBox.style.transform = direction === 'next' ? 'translateX(8px)' : 'translateX(-8px)';
+            cardBox.style.transition = 'all 0.18s ease';
+        }
+
         setTimeout(() => {
-            const additionalPositions = calculateGridPositions(25);
-            const allSymbols = [...initialSymbols];
-            
-            additionalPositions.forEach(pos => {
-                const size = 0.6 + Math.random() * 0.6;
-                const opacity = 0.4 + Math.random() * 0.4;
-                allSymbols.push(createSymbol(pos.x, pos.y, size, opacity));
-            });
-
-            // Update symbols periodically
-            const updateInterval = setInterval(() => {
-                allSymbols.forEach(symbol => {
-                    if (Math.random() > 0.7) { // 30% chance to update each symbol
-                        updateSymbol(symbol);
-                    }
-                });
-            }, 400);
-
-            // Function to handle the fade out sequence
-            function startFadeOut() {
-                if (isTransitioning) return;
-                
-                isTransitioning = true;
-                clearInterval(updateInterval);
-                
-                // Add hidden class to start the fade out
-                loadingScreen.classList.add('hidden');
-                
-                // Remove the loading screen after the transition completes
-                setTimeout(() => {
-                    loadingScreen.classList.add('removed');
-                    document.body.classList.remove('loading');
-                    document.body.style.overflow = 'auto';
-                    
-                    // Clean up DOM
-                    loadingScreen.remove();
-                }, 1500);
+            if (projectTitle) projectTitle.textContent = project.title;
+            if (projectMediaTag) projectMediaTag.textContent = project.tag;
+            if (projectImage) {
+                projectImage.src = project.image;
+                projectImage.alt = project.title;
+                projectImage.style.objectFit = project.fit || 'cover';
+                projectImage.style.objectPosition = project.position || 'center top';
+            }
+            if (specPlatform) specPlatform.textContent = project.platform;
+            if (specType) specType.textContent = project.type;
+            if (specFormat) specFormat.textContent = project.format;
+            if (specDesc) specDesc.textContent = project.description;
+            if (projectCounter) projectCounter.textContent = `0${index + 1} / 0${projects.length}`;
+            if (projectPrimaryLink) {
+                projectPrimaryLink.href = project.primaryLink;
+                if (projectPrimaryText) projectPrimaryText.textContent = project.primaryText;
             }
 
-            // Start the fade out after 5 seconds
+            if (cardBox) {
+                cardBox.style.opacity = '1';
+                cardBox.style.transform = 'translateX(0)';
+            }
+        }, 120);
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            const nextIdx = (currentProjectIndex - 1 + projects.length) % projects.length;
+            updateProjectDisplay(nextIdx, 'prev');
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            const nextIdx = (currentProjectIndex + 1) % projects.length;
+            updateProjectDisplay(nextIdx, 'next');
+        });
+    }
+
+    // ---------------------------------------------------------------
+    // 3. CYBERPUNK SLIDE-OUT DRAWER TOGGLE (MENU)
+    // ---------------------------------------------------------------
+    const menuToggle = document.getElementById('menuToggle');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const drawerClose = document.getElementById('drawerClose');
+
+    function openDrawer() {
+        if (sideDrawer && drawerBackdrop) {
+            sideDrawer.classList.add('active');
+            drawerBackdrop.classList.add('active');
+            sideDrawer.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeDrawer() {
+        if (sideDrawer && drawerBackdrop) {
+            sideDrawer.classList.remove('active');
+            drawerBackdrop.classList.remove('active');
+            sideDrawer.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+    }
+
+    if (menuToggle) menuToggle.addEventListener('click', openDrawer);
+    if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+    if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
+
+    // ---------------------------------------------------------------
+    // 4. DETAILED INFORMATION MODAL
+    // ---------------------------------------------------------------
+    const openQuickDetailsBtn = document.getElementById('openQuickDetailsBtn');
+    const projectModal = document.getElementById('projectModal');
+    const projectModalBackdrop = document.getElementById('projectModalBackdrop');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalProjectTitle = document.getElementById('modalProjectTitle');
+    const modalProjectContent = document.getElementById('modalProjectContent');
+
+    function openModal() {
+        const currentProject = projects[currentProjectIndex];
+        if (modalProjectTitle) modalProjectTitle.textContent = currentProject.title;
+        if (modalProjectContent) modalProjectContent.innerHTML = currentProject.detailsHtml;
+
+        if (projectModal && projectModalBackdrop) {
+            projectModal.classList.add('active');
+            projectModalBackdrop.classList.add('active');
+            projectModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal() {
+        if (projectModal && projectModalBackdrop) {
+            projectModal.classList.remove('active');
+            projectModalBackdrop.classList.remove('active');
+            projectModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+    }
+
+    if (openQuickDetailsBtn) openQuickDetailsBtn.addEventListener('click', openModal);
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+    if (projectModalBackdrop) projectModalBackdrop.addEventListener('click', closeModal);
+
+    // Close on Escape Key
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeDrawer();
+            closeModal();
+        } else if (e.key === 'ArrowRight' && !projectModal.classList.contains('active') && !sideDrawer.classList.contains('active')) {
+            const nextIdx = (currentProjectIndex + 1) % projects.length;
+            updateProjectDisplay(nextIdx, 'next');
+        } else if (e.key === 'ArrowLeft' && !projectModal.classList.contains('active') && !sideDrawer.classList.contains('active')) {
+            const nextIdx = (currentProjectIndex - 1 + projects.length) % projects.length;
+            updateProjectDisplay(nextIdx, 'prev');
+        }
+    });
+
+    // ---------------------------------------------------------------
+    // 5. CONTACT FORM SUBMISSION FEEDBACK
+    // ---------------------------------------------------------------
+    const contactForm = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('contactName');
+            const name = nameInput ? nameInput.value : 'Visitor';
+
+            if (formStatus) {
+                formStatus.style.color = '#00ff66';
+                formStatus.textContent = `[OK] Message transmitted for ${name}. Thank you!`;
+            }
+
+            contactForm.reset();
+
             setTimeout(() => {
-                if (!isTransitioning) {
-                    startFadeOut();
-                }
+                if (formStatus) formStatus.textContent = '';
             }, 5000);
-
-            // Fallback: Remove loading screen if something goes wrong
-            setTimeout(() => {
-                if (!isTransitioning) {
-                    startFadeOut();
-                }
-            }, 10000);
-        }, 1500);
-
-        // Handle navigation active states
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-links a');
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.5
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${id}`) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            });
-        }, observerOptions);
-
-        sections.forEach(section => observer.observe(section));
-
-        // Smooth scrolling for navigation links
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
-                
-                if (targetSection) {
-                    window.scrollTo({
-                        top: targetSection.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
         });
-
-        // Handle navbar scroll effect
-        const mainNav = document.querySelector('.main-nav');
-        let lastScroll = 0;
-
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            
-            if (currentScroll <= 0) {
-                mainNav.classList.remove('scrolled');
-            } else {
-                mainNav.classList.add('scrolled');
-            }
-            
-            lastScroll = currentScroll;
-        });
-
-        // 3D animations initialized via separate scripts
-    } catch (error) {
-        console.error('Error in loading animation:', error);
-        document.body.style.overflow = 'auto';
-        document.body.classList.remove('loading');
     }
 });
-
-// Old 2D Projects Neural Network removed - now using 3D sphere in projects-sphere.js 

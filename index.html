@@ -3,240 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eduardo Quinones - Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Eduardo Quinones — Software Engineer</title>
+    
+    <!-- Google Fonts: JetBrains Mono (Tech Specs & Code), Space Grotesk (Modern Display), Inter (Body), Silkscreen (Pixel) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    
+    <link rel="stylesheet" href="style.css?v=5.1">
 </head>
 <body>
-    <canvas id="space-canvas"></canvas>
-    <div class="loading-screen">
-        <div class="loading-container">
-            <div class="symbol-container"></div>
-        </div>
-    </div>
-
-    <nav class="main-nav">
-        <div class="nav-container">
-            <div class="logo">
-                <a href="#home">EQ</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#skills" class="nav-link">Skills</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <header class="hero-section" id="home">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="name">Eduardo Quinones</span>
-                <span class="subtitle">Software Engineer</span>
-            </h1>
-            <div class="cta-buttons">
-                <a href="#projects" class="cta-button primary">
-                    <span>Explore My Projects</span>
-                    <i class="fas fa-arrow-down"></i>
-                </a>
-                <a href="resume.pdf" target="_blank" class="cta-button secondary">
-                    <span>View My Resume</span>
-                    <i class="fas fa-file-alt"></i>
-                </a>
+    <!-- Top Navigation Bar -->
+    <header class="site-header">
+        <div class="nav-inner">
+            <a href="#hero" class="brand-logo" aria-label="Home">
+                <span class="brand-pixel">EQ8</span>
+            </a>
+            
+            <div class="nav-right">
+                <span class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">AVAILABLE FOR WORK</span>
+                </span>
+                
+                <button class="menu-toggle-btn" id="menuToggle" aria-label="Open Navigation Drawer">
+                    <span class="menu-label">MENU</span>
+                    <div class="hamburger-lines">
+                        <span class="line"></span>
+                        <span class="line"></span>
+                    </div>
+                </button>
             </div>
         </div>
-        <div class="hero-overlay"></div>
-        <div class="floating-elements">
-            <div class="floating-icon" data-aos="fade-up" data-aos-delay="100"><i class="fas fa-code"></i></div>
-            <div class="floating-icon" data-aos="fade-up" data-aos-delay="200"><i class="fas fa-rocket"></i></div>
-            <div class="floating-icon" data-aos="fade-up" data-aos-delay="300"><i class="fas fa-microchip"></i></div>
-        </div>
-        <video class="hero-video" autoplay muted loop>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-sunrise-over-the-sea-1180-large.mp4" type="video/mp4">
-        </video>
     </header>
 
-    <section class="about-section" id="about">
-        <div class="about-container">
-            <div class="about-image">
-                <img src="pictures/IMG_4607.jpeg" alt="Profile Image">
+    <main class="viewport-wrapper">
+        <!-- TOP SECTION: HERO & 3D WIREFRAME VISUAL -->
+        <section class="hero-panel" id="hero">
+            <div class="hero-inner">
+                <div class="hero-text-col">
+                    <div class="hero-badge-tag">// SOFTWARE ENGINEER &amp; CREATIVE TECH</div>
+                    <h1 class="hero-headline">
+                        <span>DEVELOPING</span>
+                        <span>BETTER</span>
+                        <span>SOFTWARE</span>
+                    </h1>
+                    <p class="hero-subtext">
+                        We develop clear, user-friendly and optimized applications. Specializing in AI-augmented workflows, web systems, and interactive tools.
+                    </p>
+                    
+                    <div class="hero-cta-group">
+                        <a href="#projects" class="btn-outline">
+                            <span>BROWSE APPS</span>
+                            <span class="btn-arrow">↗</span>
+                        </a>
+                        <a href="resume.pdf" target="_blank" class="btn-ghost">
+                            <span>RESUME</span>
+                            <span class="btn-arrow">↗</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-3d-col">
+                    <div class="canvas-wrapper">
+                        <canvas id="hero-3d-canvas"></canvas>
+                    </div>
+                </div>
             </div>
-            <div class="about-content">
-                <h2>About Me</h2>
-                <p>I'm a passionate Computer Science student with a deep love for creating elegant solutions. My journey in technology began with a curiosity about how things work, which has evolved into a dedication to building meaningful software that makes a difference.</p>
-                <p>When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or working on personal development initiatives that push the boundaries of what's possible.</p>
+        </section>
+
+        <!-- SUBTLE HORIZONTAL STATUS DIVIDER -->
+        <div class="grid-divider">
+            <div class="divider-line"></div>
+            <div class="divider-coords">
+                <span>LAT: 29.7604° N</span>
+                <span class="divider-center">INDEX // 03 PROJECTS LOADED</span>
+                <span>SYS_READY // OK</span>
             </div>
         </div>
-    </section>
 
-    <section class="projects-section" id="projects">
-        <div class="projects-container">
-            <div class="projects-left">
-                <h2 class="projects-title">Featured Projects</h2>
-                <div class="projects-column">
-                    <div class="project-card">
-                        <div class="project-content">
-                            <h3>Invoice MCP Reader Tool</h3>
-                            <p>An intelligent tool leveraging the Model Context Protocol (MCP) to parse, analyze, and extract data from invoices automatically. Streamlines financial workflows with high accuracy.</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">Python</span>
-                                <span class="tech-tag">MCP</span>
-                                <span class="tech-tag">AI</span>
-                            </div>
-                            <a href="invoice-tool.html" class="project-button" target="_blank">
-                                <span>Watch Demo</span>
-                                <i class="fas fa-play-circle"></i>
-                            </a>
+        <!-- BOTTOM SECTION: RECENTLY RELEASED SPEC SHEET & SWITCHER -->
+        <section class="showcase-panel" id="projects">
+            <div class="showcase-inner">
+                <!-- Vertical Rotated Label -->
+                <div class="vertical-label-col">
+                    <span class="vertical-text">RECENTLY RELEASED</span>
+                </div>
+
+                <!-- Featured Project Card Content -->
+                <div class="project-card-container">
+                    <!-- Project Media / Thumbnail -->
+                    <div class="project-media-box">
+                        <div class="media-frame">
+                            <img id="projectImage" src="pictures/invoice-tool.jpg" alt="Invoice MCP Reader Tool">
+                            <div class="media-corner corner-tl"></div>
+                            <div class="media-corner corner-br"></div>
+                            <div class="media-tag" id="projectMediaTag">AI / MCP PROTOCOL</div>
                         </div>
                     </div>
-                    <div class="project-card">
-                        <div class="project-content">
-                            <h3>Instant Code Connect</h3>
-                            <p>Connects students and uses HTML, CSS & Script JS.</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">HTML</span>
-                                <span class="tech-tag">CSS</span>
-                                <span class="tech-tag">JavaScript</span>
+
+                    <!-- Project Specifications & Metadata -->
+                    <div class="project-details-box">
+                        <div class="project-header-row">
+                            <h2 class="project-title" id="projectTitle">INVOICE MCP READER</h2>
+                            <div class="project-nav-controls">
+                                <button class="p-nav-btn" id="prevProjectBtn" aria-label="Previous project">←</button>
+                                <span class="p-nav-counter" id="projectCounter">01 / 03</span>
+                                <button class="p-nav-btn" id="nextProjectBtn" aria-label="Next project">→</button>
                             </div>
-                            <a href="https://eddieeq7.github.io/InstantCodeConnect/" class="project-button" target="_blank" rel="noopener">
-                                <span>View Project</span>
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
                         </div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-content">
-                            <h3>Neon Chase</h3>
-                            <p>A modern neon-styled 2D arcade car chase game with smooth controls, dynamic enemy AI, and beautiful particle effects. Built with vanilla JavaScript and HTML5 Canvas.</p>
-                            <div class="tech-stack">
-                                <span class="tech-tag">JavaScript</span>
-                                <span class="tech-tag">HTML5 Canvas</span>
-                                <span class="tech-tag">Game Dev</span>
+
+                        <div class="title-underline"></div>
+
+                        <!-- Technical Specs Grid -->
+                        <div class="spec-list">
+                            <div class="spec-item">
+                                <div class="spec-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="spec-content">
+                                    <span class="spec-key">Platform:</span>
+                                    <span class="spec-val" id="specPlatform">Python, Claude AI, macOS / Linux</span>
+                                </div>
                             </div>
-                            <a href="gametry/Gametry2/index.html" class="project-button" target="_blank">
-                                <span>Play Game</span>
-                                <i class="fas fa-gamepad"></i>
+
+                            <div class="spec-item">
+                                <div class="spec-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                </div>
+                                <div class="spec-content">
+                                    <span class="spec-key">Type:</span>
+                                    <span class="spec-val" id="specType">AI Automation Tool / Agent Protocol</span>
+                                </div>
+                            </div>
+
+                            <div class="spec-item">
+                                <div class="spec-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="spec-content">
+                                    <span class="spec-key">Format:</span>
+                                    <span class="spec-val" id="specFormat">MCP Server, CLI, Automated Parser</span>
+                                </div>
+                            </div>
+
+                            <div class="spec-item">
+                                <div class="spec-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="1.8" fill="none">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </div>
+                                <div class="spec-content">
+                                    <span class="spec-key">Description:</span>
+                                    <span class="spec-val" id="specDesc">An intelligent tool leveraging the Model Context Protocol (MCP) to parse, analyze, and extract structured financial data from invoices automatically with zero manual effort.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="project-actions-row">
+                            <a href="invoice-tool.html" target="_blank" class="btn-solid" id="projectPrimaryLink">
+                                <span id="projectPrimaryText">WATCH DEMO</span>
+                                <span class="btn-arrow">↗</span>
                             </a>
+                            <button class="btn-text" id="openQuickDetailsBtn">
+                                <span>DETAILED INFORMATION</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Right Edge Cassette / Blueprint SVG Wireframe -->
+                <div class="right-blueprint-decoration" aria-hidden="true">
+                    <svg viewBox="0 0 200 400" width="150" height="300" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none">
+                        <!-- Cassette / Tech Outline -->
+                        <rect x="10" y="10" width="180" height="380" rx="14" stroke="rgba(255,255,255,0.3)"/>
+                        <circle cx="30" cy="30" r="6" />
+                        <circle cx="170" cy="30" r="6" />
+                        <circle cx="30" cy="370" r="6" />
+                        <circle cx="170" cy="370" r="6" />
+                        <!-- Inner cassette window -->
+                        <rect x="35" y="80" width="130" height="150" rx="8"/>
+                        <!-- Reels -->
+                        <circle cx="70" cy="155" r="22" stroke-dasharray="3 3"/>
+                        <circle cx="70" cy="155" r="10" />
+                        <circle cx="130" cy="155" r="22" stroke-dasharray="3 3"/>
+                        <circle cx="130" cy="155" r="10" />
+                        <line x1="70" y1="133" x2="130" y2="133" />
+                        <line x1="70" y1="177" x2="130" y2="177" />
+                        <!-- Tape head guide -->
+                        <polygon points="50,230 150,230 135,280 65,280" />
+                        <circle cx="80" cy="255" r="5" />
+                        <circle cx="120" cy="255" r="5" />
+                        <!-- Calibrations -->
+                        <line x1="35" y1="310" x2="165" y2="310" stroke-dasharray="4 2"/>
+                        <line x1="35" y1="320" x2="165" y2="320" stroke-dasharray="2 4"/>
+                        <line x1="35" y1="340" x2="90" y2="340" />
+                        <line x1="110" y1="340" x2="165" y2="340" />
+                    </svg>
+                </div>
             </div>
-            <div class="projects-right">
-                <div id="projects-3d-network"></div>
+        </section>
+    </main>
+
+    <!-- SLIDE-OUT CYBERPUNK NAVIGATION DRAWER (ABOUT, SKILLS, CONTACT) -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="side-drawer" id="sideDrawer" aria-hidden="true">
+        <div class="drawer-header">
+            <div class="drawer-title-box">
+                <span class="drawer-pixel-tag">// PROFILE &amp; SPECS</span>
+                <h3>EDUARDO QUINONES</h3>
+            </div>
+            <button class="drawer-close-btn" id="drawerClose" aria-label="Close drawer">
+                <span>CLOSE [X]</span>
+            </button>
+        </div>
+
+        <div class="drawer-body">
+            <!-- Profile Info -->
+            <div class="drawer-section">
+                <div class="profile-card">
+                    <img src="pictures/IMG_4607.jpeg" alt="Eduardo Quinones" class="profile-avatar">
+                    <div class="profile-meta">
+                        <h4>Eduardo Quinones</h4>
+                        <p class="role-badge">Computer Science &amp; Software Engineering</p>
+                        <p class="profile-bio">
+                            Passionate software engineer focused on building clean, resilient, and optimized software. Deeply interested in AI agent ecosystems, backend architectures, and high-performance interactive interfaces.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Skills Section -->
+            <div class="drawer-section">
+                <h4 class="section-heading">// CORE TECHNOLOGIES</h4>
+                <div class="skills-tag-grid">
+                    <div class="skill-pill">
+                        <i class="devicon-python-plain colored"></i>
+                        <span>Python</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-cplusplus-plain colored"></i>
+                        <span>C++</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-react-original colored"></i>
+                        <span>React</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-typescript-plain colored"></i>
+                        <span>TypeScript</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-nodejs-plain colored"></i>
+                        <span>Node.js</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-javascript-plain colored"></i>
+                        <span>JavaScript</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-html5-plain colored"></i>
+                        <span>HTML5 Canvas</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="devicon-threejs-original colored"></i>
+                        <span>Three.js</span>
+                    </div>
+                    <div class="skill-pill">
+                        <i class="fas fa-robot"></i>
+                        <span>MCP / AI Agents</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Direct Contact Form -->
+            <div class="drawer-section">
+                <h4 class="section-heading">// TRANSMIT MESSAGE</h4>
+                <form class="contact-terminal-form" id="contactForm">
+                    <div class="form-row">
+                        <label for="contactName">NAME</label>
+                        <input type="text" id="contactName" placeholder="e.g. Alex Mercer" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="contactEmail">EMAIL</label>
+                        <input type="email" id="contactEmail" placeholder="e.g. alex@example.com" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="contactMessage">MESSAGE</label>
+                        <textarea id="contactMessage" rows="3" placeholder="Brief project summary or inquiry..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-solid btn-full">
+                        <span>TRANSMIT MESSAGE</span>
+                        <span class="btn-arrow">↗</span>
+                    </button>
+                    <div class="form-status" id="formStatus"></div>
+                </form>
+            </div>
+
+            <!-- Social / Quick Links -->
+            <div class="drawer-section drawer-footer-links">
+                <a href="https://github.com/Eddieeq7" target="_blank" rel="noopener">
+                    <i class="fab fa-github"></i> GITHUB
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener">
+                    <i class="fab fa-linkedin"></i> LINKEDIN
+                </a>
+                <a href="mailto:quinoneseduardo77@gmail.com">
+                    <i class="fas fa-envelope"></i> EMAIL
+                </a>
+                <a href="resume.pdf" target="_blank">
+                    <i class="fas fa-file-pdf"></i> RESUME
+                </a>
             </div>
         </div>
-    </section>
+    </aside>
 
-    <div class="three-things">
-        <div class="things-container">
-            <h3 data-aos="fade-up">Three Things I Love</h3>
-            <div class="things-grid">
-                <div class="thing-item" data-aos="fade-up" data-aos-delay="100">
-                    <i class="fas fa-code"></i>
-                    <h4>Clean Code</h4>
-                    <p>Writing elegant, maintainable solutions that stand the test of time.</p>
-                </div>
-                <div class="thing-item" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fas fa-rocket"></i>
-                    <h4>Space Tech</h4>
-                    <p>Exploring the intersection of software and space exploration.</p>
-                </div>
-                <div class="thing-item" data-aos="fade-up" data-aos-delay="300">
-                    <i class="fas fa-users"></i>
-                    <h4>Open Source</h4>
-                    <p>Contributing to and learning from the global developer community.</p>
-                </div>
-            </div>
+    <!-- Modal for Detailed Project Information -->
+    <div class="modal-backdrop" id="projectModalBackdrop"></div>
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="modalProjectTitle">PROJECT DETAILS</h3>
+            <button class="modal-close-btn" id="modalCloseBtn">[ESC / CLOSE]</button>
+        </div>
+        <div class="modal-content" id="modalProjectContent">
+            <!-- Dynamic Content Injected -->
         </div>
     </div>
 
-    <section class="skills-section" id="skills">
-        <div class="skills-hero">
-            <div class="skills-header">
-                <h2 class="skills-title">Technical Skills</h2>
-                <p class="skills-description">
-                    Cutting-edge technologies powering modern solutions.
-                </p>
-            </div>
-            
-            <div class="tech-logos-grid">
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-python-plain colored"></i>
-                    </div>
-                    <span>Python</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-react-original colored"></i>
-                    </div>
-                    <span>React</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-typescript-plain colored"></i>
-                    </div>
-                    <span>TypeScript</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-nodejs-plain-wordmark colored"></i>
-                    </div>
-                    <span>Node.js</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-cplusplus-plain colored"></i>
-                    </div>
-                    <span>C++</span>
-                </div>
-                <div class="tech-logo-card">
-                    <div class="tech-icon-circle">
-                        <i class="devicon-javascript-plain colored"></i>
-                    </div>
-                    <span>JavaScript</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact-section" id="contact">
-        <div class="contact-container">
-            <h2>Get in Touch</h2>
-            <p class="contact-subtitle">Sail into the future with me</p>
-            <form class="contact-form">
-                <div class="form-group">
-                    <input type="text" id="name" name="name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="email" name="email" placeholder="Your Email" required>
-                </div>
-                <div class="form-group">
-                    <textarea id="message" name="message" placeholder="Your Message" required></textarea>
-                </div>
-                <button type="submit" class="submit-button">Send Message</button>
-            </form>
-        </div>
-    </section>
-
-    <footer class="main-footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Eduardo Quinones. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-            </div>
-        </div>
-    </footer>
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="space-background.js"></script>
-    <script src="projects-sphere.js"></script>
-    <script src="script.js"></script>
+    <script src="wireframe-hero.js?v=5.1"></script>
+    <script src="script.js?v=5.1"></script>
 </body>
 </html>
