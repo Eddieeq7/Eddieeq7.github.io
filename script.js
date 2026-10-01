@@ -118,37 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `
         },
         {
-            title: "SKILLCAST (ROGER)",
-            tag: "RUST / MACOS / EVENT-DRIVEN",
-            image: "pictures/roger-today.jpg",
-            fit: "cover",
-            position: "left top",
-            platform: "Rust, TypeScript, Node, Electron, SQLite — macOS",
-            type: "Local-First Desktop Agent / Real-Time Capture Pipeline",
-            format: "Signed macOS app, used by ~200 people",
-            description: "I own the Rust capture core of a local-first macOS agent: a real-time pipeline that coalesces raw keystrokes into semantic events and commits them to an append-only SQLite write-ahead log, with privacy enforced before anything touches disk.",
-            primaryLink: "https://github.com/oaisis-dev/roger-releases",
-            primaryText: "DOWNLOAD ROGER",
-            detailsHtml: `
-                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// SKILLCAST (ROGER) — RUST CAPTURE CORE</h4>
-                <p style="margin-bottom: 1rem;">Roger watches how you work on your Mac, learns repeated tasks as editable skills, and runs them for you. Everything stays on the machine. I own the Rust capture core that everything else is built on.</p>
-                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;">
-                    <div>• Real-time event pipeline that coalesces raw keystrokes into semantic events and commits them to an append-only SQLite write-ahead log.</div>
-                    <div style="margin-top: 0.5rem;">• Replaced a 300 ms polling thread with an event-driven kqueue (EVFILT_VNODE) watcher, cutting ~3.3 idle wakeups/s to zero and removing steady-state CPU load from the daemon's health path.</div>
-                    <div style="margin-top: 0.5rem;">• Privacy at the capture edge: app denylist, secure-field masking, and PII redaction before any write, so cleartext never reaches disk. Verified with 130+ Rust and TypeScript unit/integration tests.</div>
-                </div>
-                <img src="pictures/roger-skills.jpg" alt="Roger's Skills screen: skills learned from repeated demonstrations, each set to ask before running" style="width: 100%; border: 1px solid var(--border-subtle); margin-bottom: 0.4rem;">
-                <p style="color: var(--text-secondary); font-size: 0.78rem; font-family: var(--font-mono);">The shipped app: skills Roger learned from demonstrations, each gated to ask first.</p>
-                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.8rem;">Source is private to the company; signed, notarized builds are public.</p>
-                <div style="margin-top: 1.4rem;">
-                    <a href="https://github.com/oaisis-dev/roger-releases" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
-                        <span>RELEASES</span>
-                        <span class="btn-arrow">↗</span>
-                    </a>
-                </div>
-            `
-        },
-        {
             title: "SMALL LANGUAGE MODEL",
             tag: "PYTORCH / TRANSFORMERS",
             image: "pictures/slm-attention.png",
@@ -245,32 +214,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Work Experiences
     const experiences = [
         {
-            company: "OASIS",
-            title: "SOFTWARE ENGINEER — OASIS",
-            role: "Software Engineer",
-            period: "Sept 2024 — Present (Current)",
-            tag: "SWE // ACTIVE CURRENT",
-            image: oasisBadgeSvg,
+            company: "OASIS — SKILLCAST (ROGER)",
+            title: "SOFTWARE ENGINEER — SKILLCAST (ROGER)",
+            role: "Software Engineer · Rust capture core",
+            period: "2026 — Present",
+            tag: "SWE // CURRENT",
+            image: "pictures/roger-today.jpg",
             fit: "cover",
-            position: "center center",
-            platform: "Oasis (Remote / Software Engineering)",
-            type: "Software Engineer (Full-Stack & Systems)",
-            format: "Python, Web Architecture, Cloud Deployment",
-            description: "Engineering production software systems and backend services at Oasis. Developing high-reliability web tools, optimizing data pipelines, and implementing modern architectural solutions.",
-            tech: ["Python", "Full-Stack", "REST APIs", "Cloud Systems"],
-            primaryLink: "eduardoquinones2027.pdf",
-            primaryText: "VIEW RESUME",
+            position: "left top",
+            platform: "Oasis · Roger, a local-first macOS agent used by ~200 people",
+            type: "Software Engineer (Rust capture core)",
+            format: "Rust, TypeScript, Node, Electron, SQLite",
+            description: "Own the Rust capture core: a real-time event pipeline that coalesces raw keystrokes into semantic events and commits them to an append-only SQLite write-ahead log. Replaced a 300 ms polling thread with an event-driven kqueue watcher, and enforce privacy (denylist, secure-field masking, PII redaction) before anything reaches disk.",
+            tech: ["Rust", "TypeScript", "Node", "Electron", "SQLite", "kqueue"],
+            primaryLink: "https://roger.openoaisis.com",
+            primaryText: "VISIT ROGER",
             detailsHtml: `
-                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// OASIS — SOFTWARE ENGINEER</h4>
-                <p style="margin-bottom: 0.6rem;"><strong>Role:</strong> Software Engineer | <strong>Duration:</strong> September 2024 — Present (Current)</p>
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// SKILLCAST (ROGER) — RUST CAPTURE CORE</h4>
+                <p style="margin-bottom: 1rem;">Roger watches how you work on your Mac, learns repeated tasks as editable skills, and runs them for you. Everything stays on the machine. I own the Rust capture core that everything else is built on.</p>
                 <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;">
-                    <div>• Engineering core production software systems and resilient backend services at Oasis.</div>
-                    <div style="margin-top: 0.5rem;">• Architecting scalable data flows, API services, and modern front-end integrations.</div>
-                    <div style="margin-top: 0.5rem;">• Optimizing application throughput, reliability, and automated deployment pipelines.</div>
+                    <div>• Real-time event pipeline that coalesces raw keystrokes into semantic events and commits them to an append-only SQLite write-ahead log.</div>
+                    <div style="margin-top: 0.5rem;">• Replaced a 300 ms polling thread with an event-driven kqueue (EVFILT_VNODE) watcher, cutting ~3.3 idle wakeups/s to zero and removing steady-state CPU load from the daemon's health path.</div>
+                    <div style="margin-top: 0.5rem;">• Privacy at the capture edge: app denylist, secure-field masking, and PII redaction before any write, so cleartext never reaches disk. Verified with 130+ Rust and TypeScript unit/integration tests.</div>
                 </div>
-                <div style="margin-top: 1.4rem;">
-                    <a href="eduardoquinones2027.pdf" target="_blank" class="btn-solid" style="display: inline-flex;">
-                        <span>OPEN RESUME (PDF)</span>
+                <img src="pictures/roger-skills.jpg" alt="Roger's Skills screen: skills learned from repeated demonstrations, each set to ask before running" style="width: 100%; border: 1px solid var(--border-subtle); margin-bottom: 0.4rem;">
+                <p style="color: var(--text-secondary); font-size: 0.78rem; font-family: var(--font-mono);">The shipped app: skills Roger learned from demonstrations, each gated to ask first.</p>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.8rem;">Source is private to the company; signed, notarized builds are public.</p>
+                <div style="margin-top: 1.4rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="https://roger.openoaisis.com" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
+                        <span>VISIT ROGER</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                    <a href="https://github.com/oaisis-dev/roger-releases" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
+                        <span>RELEASES</span>
                         <span class="btn-arrow">↗</span>
                     </a>
                 </div>
