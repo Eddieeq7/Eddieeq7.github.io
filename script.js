@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
             format: "Java, Spring Boot, Kafka, SQL/JPA, REST APIs",
             description: "3-month software engineering internship. Built & deployed production REST APIs automating failed transaction recovery. Designed SQL/JPA repositories for transaction auditing, and shipped features across enterprise microservices through UAT to production.",
             tech: ["Java", "Spring Boot", "SQL/JPA", "Kafka", "REST API", "Microservices"],
-            primaryLink: "eduardoquinones2027.pdf",
+            primaryLink: "EQResume.pdf",
             primaryText: "VIEW RESUME",
             detailsHtml: `
                 <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// JPMORGAN CHASE & CO. — SOFTWARE ENGINEER INTERN</h4>
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="margin-top: 0.5rem;">• Delivered a production feature from design through deployment by analyzing a large microservice codebase, implementing backend services, performing UAT testing, and supporting production releases.</div>
                 </div>
                 <div style="margin-top: 1.4rem;">
-                    <a href="eduardoquinones2027.pdf" target="_blank" class="btn-solid" style="display: inline-flex;">
+                    <a href="EQResume.pdf" target="_blank" class="btn-solid" style="display: inline-flex;">
                         <span>OPEN RESUME (PDF)</span>
                         <span class="btn-arrow">↗</span>
                     </a>
