@@ -212,7 +212,7 @@
         const ring = rings[shard];
         if (ring.length >= RING_CAP) {
           totals.ringFull++;
-          log(`${apidName(p.apid)} seq ${p.seq} → ring ${shard} full, dropped (counted)`, "crit");
+          log(`${apidName(p.apid)} #${p.seq}: queue ${shard} was full, so it was dropped and counted`, "crit");
           move(p, "dropRing", L.rxX + 30, laneY(shard) + 24, 320);
         } else {
           ring.push(p);
@@ -250,15 +250,17 @@
     renderInspector();
     if (d.err) {
       totals.crc += d.err === "bad_crc" ? 1 : 0;
-      wk.flash = { text: d.err === "bad_crc" ? "CRC ✕" : d.err, color: C.crit, t: now };
-      log(`${apidName(p.apid)} frame rejected: ${d.err}${p.flipped ? ` (bit ${p.flipped.bit} of byte ${p.flipped.byte} flipped in transit)` : ""}`, "crit");
+      wk.flash = { text: d.err === "bad_crc" ? "CORRUPT ✕" : d.err, color: C.crit, t: now };
+      log(`${apidName(p.apid)} packet rejected: checksum failed${p.flipped ? ` (1 bit flipped in byte ${p.flipped.byte})` : ""}`, "crit");
     } else {
       const r = trackers[d.apid].observe(d.seq);
-      const label = r.v === "GAP" ? `GAP +${r.n} lost` : r.v;
+      const label = r.v === "GAP" ? `${r.n} LOST` : r.v === "REORDERED" ? "OUT OF ORDER" : r.v === "FIRST" ? "OK" : r.v === "IN ORDER" ? "OK" : r.v;
       const color = r.v === "IN ORDER" || r.v === "FIRST" ? C.good : r.v === "GAP" ? C.crit : C.warn;
       wk.flash = { text: label, color, t: now };
       if (r.v !== "IN ORDER" && r.v !== "FIRST")
-        log(`${apidName(d.apid)} seq ${d.seq} → ${label}${r.v === "REORDERED" ? " (lost count corrected)" : ""}`, r.v === "GAP" ? "crit" : "warn");
+        log(r.v === "GAP" ? `${apidName(d.apid)}: got #${d.seq}, so ${r.n === 1 ? "the one before it was" : `${r.n} before it were`} lost`
+          : r.v === "REORDERED" ? `${apidName(d.apid)} #${d.seq} arrived late (out of order), so it's no longer counted as lost`
+          : `${apidName(d.apid)} #${d.seq} arrived twice (duplicate), extra copy ignored`, r.v === "GAP" ? "crit" : "warn");
     }
     p.stage = "done"; p.tDone = now; p.verdictBad = !!d.err;
     renderStats();
@@ -288,8 +290,8 @@
     const fs = L.narrow ? 8 : 10;
 
     // Stage headings
-    const heads = [[L.satX, "SAT"], [(L.linkA + L.linkB) / 2, L.narrow ? "LINK" : "RF LINK · loss/jitter"], [L.sockX, "UDP"],
-                   [L.rxX, L.narrow ? "RX" : "RX · epoll"], [(L.ringA + L.ringB) / 2, L.narrow ? "SPSC" : "SPSC rings"], [L.workX, "WORKERS"]];
+    const heads = [[L.satX, "SATELLITE"], [(L.linkA + L.linkB) / 2, L.narrow ? "NETWORK" : "UNRELIABLE NETWORK"], [L.sockX, "SOCKET"],
+                   [L.rxX, "RECEIVER"], [(L.ringA + L.ringB) / 2, L.narrow ? "QUEUES" : "LOCK-FREE QUEUES"], [L.workX, "WORKERS"]];
     heads.forEach(([x, t]) => label(t, x, 18, C.ink3, "center", fs));
 
     // Satellite sources
@@ -323,7 +325,7 @@
       const fill = rings[w].length / RING_CAP;
       ctx.fillStyle = fill >= 1 ? C.crit : fill > 0.6 ? C.warn : C.rule2;
       ctx.fillRect(L.ringA, y + L.ph / 2 + 8, (L.ringB - L.ringA) * fill, 2);
-      if (!L.narrow) label(`ring ${w} · ${rings[w].length}/${RING_CAP}`, L.ringA, y - L.ph / 2 - 14, C.ink3, "left", 9);
+      if (!L.narrow) label(`queue ${w} · ${rings[w].length}/${RING_CAP}`, L.ringA, y - L.ph / 2 - 14, C.ink3, "left", 9);
 
       // worker box + verdict flash
       const wk = workers[w];
@@ -362,7 +364,7 @@
       return `<tr><td><span class="swatch" style="background:var(--series-${a.id})"></span>${a.name}</td>
         <td class="num">${s.received}</td><td class="num">${s.lost}</td><td class="num">${s.duplicates}</td><td class="num">${s.reordered}</td></tr>`;
     }).join("");
-    statsFoot.innerHTML = `<tr><td colspan="5">datagrams ${totals.datagrams} · CRC rejects ${totals.crc} · ring-full drops ${totals.ringFull} · <span title="ground truth the station can't see">injected loss ${totals.injectedLoss}</span></td></tr>`;
+    statsFoot.innerHTML = `<tr><td colspan="5">packets arrived ${totals.datagrams} · corrupted &amp; rejected ${totals.crc} · dropped at full queue ${totals.ringFull} · <span title="the truth, which the ground station can't see directly">really lost on the network ${totals.injectedLoss}</span></td></tr>`;
   }
 
   const logEl = $("#gs-log");
@@ -375,7 +377,7 @@
     if (!logEl) return;
     logEl.innerHTML = logLines.length
       ? logLines.map((l) => `<li data-k="${l.kind}">${l.text}</li>`).join("")
-      : `<li class="muted">Anomalies show up here as the workers classify them.</li>`;
+      : `<li class="muted">Problems show up here as the workers catch them.</li>`;
   }
 
   const insEl = $("#gs-inspector");

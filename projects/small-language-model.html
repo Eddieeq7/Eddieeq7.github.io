@@ -1,171 +1,249 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="auto">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Small Language Model from Scratch — Eduardo Quinones</title>
-<meta name="description" content="A decoder-only transformer written from scratch in PyTorch: byte-level BPE tokenizer, hand-written causal multi-head attention, training loop, and a hyperparameter sweep against validation loss. Real attention maps and loss curves from the trained model.">
+<meta name="description" content="A GPT-style language model built from scratch in PyTorch: tokenizer, attention, training loop, and tuning, trained on Shakespeare. See what the trained model pays attention to.">
 <meta name="author" content="Eduardo Quinones">
-<meta property="og:title" content="Small Language Model from Scratch — Eduardo Quinones">
-<meta property="og:description" content="Python · PyTorch · decoder-only transformer · BPE tokenizer · multi-head attention · training loop · hyperparameter sweep">
+<meta name="theme-color" content="#03060c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="base.css">
-<link rel="stylesheet" href="project.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="case.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace'>EQ</text></svg>">
 <style>
-  .arch { width: 100%; max-width: 560px; height: auto; display: block; }
-  .arch text { font-family: var(--font-mono); }
-  .arch .box { fill: var(--paper); stroke: var(--rule-strong); }
-  .arch .hot { fill: var(--accent-soft); stroke: var(--accent); }
-  .arch .lbl { font-size: 13px; fill: var(--ink); }
-  .arch .shape { font-size: 11px; fill: var(--ink-3); }
-  .arch .edge { stroke: var(--ink-3); fill: none; }
+  /* Language model: violet */
+  :root { --accent: #a78bfa; --accent-soft: rgba(167, 139, 250, .14); --heat-1: 167, 139, 250; }
+  .btn--solid { color: #12082b; }
+  .seg button[aria-pressed="true"] { color: #12082b; }
 
-  .attn-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; }
-  .attn-wrap > div { padding: 1rem; min-width: 0; }
-  .attn-wrap > div + div { border-left: 1px solid var(--rule); }
-  @media (max-width: 860px) { .attn-wrap { grid-template-columns: minmax(0, 1fr); } .attn-wrap > div + div { border-left: 0; border-top: 1px solid var(--rule); } }
-  #attn-tokens { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 1rem; }
-  .tok {
-    font: 400 .8rem/1 var(--font-mono); padding: .4rem .35rem; border: 1px solid var(--rule);
-    border-radius: 2px; background: transparent; color: var(--ink); cursor: pointer;
-  }
-  .tok.is-q { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .tok.is-future { color: var(--ink-3); border-style: dashed; }
-  #attn-caption { font: 400 .76rem/1.6 var(--font-mono); color: var(--ink-2); }
-  #attn-caption b { color: var(--ink); font-weight: 500; }
-  #attn-heat { width: 100%; aspect-ratio: 1; display: block; cursor: crosshair; }
-  .gs-h { font: 500 .66rem/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .75rem; }
-
-  #next-token { display: grid; gap: .4rem; }
-  #next-token li { display: grid; grid-template-columns: 6rem 1fr 3.5rem; gap: .75rem; align-items: center; font: 400 .74rem/1 var(--font-mono); color: var(--ink-2); }
-  #next-token .bar { height: 8px; background: var(--paper-2); border-radius: 2px; overflow: hidden; }
-  #next-token .bar i { display: block; height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; }
+  .attn-wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+  .attn-wrap > div { padding: 1.1rem; min-width: 0; }
+  .attn-wrap > div + div { border-left: 1px solid var(--line); }
+  @media (max-width: 860px) { .attn-wrap { grid-template-columns: minmax(0, 1fr); } .attn-wrap > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+  .gs-h { font: 600 .68rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin-bottom: .75rem; }
+  #attn-tokens { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 1rem; }
+  .tok { font: 500 .9rem/1 var(--mono); padding: .5rem .45rem; border: 1px solid var(--line-2); border-radius: 4px; background: transparent; color: var(--text); cursor: pointer; }
+  .tok.is-q { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tok.is-future { color: var(--text-3); border-style: dashed; }
+  #attn-caption { font-size: .98rem; line-height: 1.6; color: var(--text-2); min-height: 3.2em; }
+  #attn-caption b { color: var(--text); font-weight: 600; }
+  #attn-heat { width: 100%; aspect-ratio: 1; display: block; cursor: crosshair; max-width: 420px; }
+  #next-token { display: grid; gap: .45rem; }
+  #next-token li { display: grid; grid-template-columns: 5rem 1fr 3.5rem; gap: .75rem; align-items: center; font: 400 .78rem/1 var(--mono); color: var(--text-2); }
+  #next-token .bar { height: 8px; background: rgba(148,163,184,.12); border-radius: 2px; overflow: hidden; }
+  #next-token .bar i { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; }
   #next-token .p { text-align: right; font-variant-numeric: tabular-nums; }
 
   .chart { width: 100%; height: 300px; display: block; }
-  .chart .tick, .sweep-fig .tick { font: 400 10px var(--font-mono); fill: var(--muted); }
-  .chart .dlabel, .sweep-fig .dlabel { font: 500 11px var(--font-mono); fill: var(--ink-2); }
+  .chart .tick, .sweep-fig .tick { font: 400 10px var(--mono); fill: var(--muted); }
+  .chart .dlabel, .sweep-fig .dlabel { font: 500 11px var(--mono); fill: var(--text-2); }
   #sweep { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.5rem 2rem; }
   .sweep-fig { margin: 0; }
-  .sweep-fig figcaption { font: 500 .7rem/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .5rem; }
+  .sweep-fig figcaption { font: 600 .7rem/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin-bottom: .5rem; }
   .sweep-fig svg { width: 100%; height: auto; display: block; }
-
+  .sample { margin: 0; padding: 1rem 1.15rem; white-space: pre-wrap; background: #02050a; border: 1px solid var(--line); border-radius: var(--r); font: 400 .82rem/1.65 var(--mono); color: var(--text); }
+  #samples .sample + .sample { margin-top: .75rem; }
   #merges { display: flex; flex-wrap: wrap; gap: .35rem; }
-  #merges code { font-size: .74rem; }
-  .sample {
-    margin: 0 0 1rem; padding: 1rem 1.15rem; white-space: pre-wrap;
-    background: var(--paper-2); border: 1px solid var(--rule); border-radius: var(--radius);
-    font: 400 .8rem/1.6 var(--font-mono); color: var(--ink);
-  }
-  details.tablealt { margin-top: 1rem; }
-  details.tablealt summary { cursor: pointer; font: 500 .72rem/1 var(--font-mono); color: var(--ink-2); }
+  .arch { width: 100%; max-width: 520px; height: auto; display: block; }
+  .arch text { font-family: var(--mono); }
+  .arch .box { fill: var(--bg-2); stroke: var(--line-2); }
+  .arch .hot { fill: var(--accent-soft); stroke: var(--accent); }
+  .arch .lbl { font-size: 13px; fill: var(--text); }
+  .arch .shape { font-size: 11px; fill: var(--text-3); }
+  .arch .edge { stroke: var(--text-3); fill: none; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+  @media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
+  .legend-row { display: flex; gap: 1.1rem; font: 400 .72rem/1 var(--mono); color: var(--text-2); margin-bottom: .5rem; }
+  .legend-row i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: .4rem; vertical-align: -1px; }
 </style>
 </head>
-<body class="case">
+<body>
 
-<a class="skip-link" href="#attention">Skip to attention explorer</a>
-<div class="scroll-progress" aria-hidden="true"><span></span></div>
-
-<header class="topbar">
-  <div class="shell topbar__inner">
-    <a class="mark" href="../index.html" aria-label="Eduardo Quinones, home">
-      <span class="mark__glyph">EQ</span>
-      <span class="mark__rule" aria-hidden="true"></span>
-    </a>
-    <nav class="topnav" aria-label="Sections">
-      <a href="#evidence">Evidence</a>
-      <a href="#architecture">Architecture</a>
-      <a href="#attention">Attention</a>
-      <a href="#training">Training</a>
+<header class="bar">
+  <div class="wrap">
+    <a class="bar__home" href="../index.html#projects">EQ <span>← all projects</span></a>
+    <nav aria-label="Sections">
+      <a href="#built">What I built</a>
+      <a href="#attention">See it think</a>
+      <a href="#results">Results</a>
+      <a href="#details">Details</a>
     </nav>
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
-      <span class="theme-toggle__dot" aria-hidden="true"></span>
-      <span class="theme-toggle__label" data-theme-label>Dark</span>
-    </button>
   </div>
 </header>
 
 <main>
-
-  <section class="case-hero">
-    <div class="shell">
-      <a class="back-link" href="../index.html#projects">← All work</a>
-      <h1 class="case-title reveal">Small Language Model, from scratch<em>.</em></h1>
-      <p class="case-lede reveal">
-        A GPT-style <strong>decoder-only transformer</strong> in PyTorch, built without
-        <code>nn.MultiheadAttention</code> or a pretrained tokenizer. A <strong>byte-level BPE tokenizer</strong>
-        trained on the corpus, <strong>causal multi-head attention</strong> written out step by step, a
-        <strong>training loop</strong> with warmup and cosine decay, and a <strong>sweep</strong> over context length,
-        embedding size, and learning rate, scored on held-out validation loss.
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">Independent project · 2026 · Python / PyTorch</p>
+      <h1>Small Language Model, built from scratch</h1>
+      <p class="hero__one-liner">
+        I built a tiny version of the kind of model behind ChatGPT, <strong>writing every part myself</strong>, from how
+        text gets split into pieces to how the model decides what comes next. Then I trained it on Shakespeare and
+        tested which settings made it learn best.
       </p>
-      <dl class="case-facts reveal">
-        <div><dt>Model</dt><dd><span data-slm="params_m">—</span>M params · <span data-slm="config.n_layer">—</span> layers · <span data-slm="config.n_head">—</span> heads</dd></div>
-        <div><dt>Data</dt><dd>Tiny Shakespeare · <span data-slm="tokens_total">—</span> BPE tokens</dd></div>
-        <div><dt>Best val loss</dt><dd><span data-slm="best_val_loss">—</span> at step <span data-slm="best_step">—</span></dd></div>
-        <div><dt>Source</dt><dd><a href="https://github.com/Eddieeq7/small-language-model" target="_blank" rel="noopener">small-language-model ↗</a></dd></div>
-      </dl>
-    </div>
-    <div class="hero__ambient" aria-hidden="true"></div>
-  </section>
-
-  <!-- ───────────── Evidence ───────────── -->
-  <section class="section section--tint" id="evidence">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Claim → evidence</h2>
-        <p class="section__note">Each part of the résumé entry, and the code behind it.</p>
-      </div>
-      <div class="chain reveal">
-        <div class="chain__row">
-          <p class="chain__claim">Decoder-only transformer, implemented from scratch</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/small-language-model/blob/main/slm/model.py" target="_blank" rel="noopener">slm/model.py</a>: embeddings, pre-norm blocks, weight-tied head · <a href="#architecture">diagram ↓</a></p>
-          <span class="chain__status">In repo</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Tokenizer</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/small-language-model/blob/main/slm/tokenizer.py" target="_blank" rel="noopener">slm/tokenizer.py</a>: byte-level BPE, trained on the training split only · <a href="#tokenizer">merges ↓</a></p>
-          <span class="chain__status">Tested</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Multi-head attention</p>
-          <p class="chain__proof">Hand-written <code>CausalSelfAttention</code>; a test checks it matches PyTorch's <code>scaled_dot_product_attention</code> to 1e-5 · <a href="#attention">real attention maps ↓</a></p>
-          <span class="chain__status">Tested</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Training loop</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/small-language-model/blob/main/slm/train.py" target="_blank" rel="noopener">slm/train.py</a>: AdamW, warmup + cosine, grad clipping, periodic eval, best-checkpointing · <a href="#training">loss curve ↓</a></p>
-          <span class="chain__status">Trained</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Tuned context length, embedding size, and learning rate against validation loss</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/small-language-model/blob/main/slm/sweep.py" target="_blank" rel="noopener">slm/sweep.py</a>: one axis at a time around a baseline · <a href="#sweep-section">results ↓</a></p>
-          <span class="chain__status">Measured</span>
-        </div>
+      <ul class="chips" aria-label="Technologies">
+        <li>Python</li><li>PyTorch</li><li>Transformer</li><li>Tokenizer (BPE)</li><li>Multi-head attention</li>
+        <li>Training loop</li><li>Hyperparameter tuning</li>
+      </ul>
+      <div class="actions">
+        <a class="btn btn--solid" href="#attention">See what it pays attention to ↓</a>
+        <a class="btn" href="https://github.com/Eddieeq7/small-language-model" target="_blank" rel="noopener">View the code ↗</a>
       </div>
     </div>
   </section>
 
-  <!-- ───────────── Architecture ───────────── -->
-  <section class="section" id="architecture">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Architecture</h2>
-        <p class="section__note">What a batch of token ids goes through, with tensor shapes.</p>
+  <!-- 1. What I built -->
+  <section class="sec" id="built">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">01</p>
+        <h2>What I built</h2>
+        <p class="sec__lede">The four parts of a language model. I wrote each one by hand instead of importing a ready-made version.</p>
       </div>
-      <div class="two-col">
-        <figure class="reveal" style="margin:0">
-          <svg class="arch" viewBox="0 0 560 640" role="img" aria-label="Model diagram, bottom to top: token ids, token embedding plus position embedding, N transformer blocks each with LayerNorm, causal multi-head self-attention and a residual add, then LayerNorm, MLP and a residual add; then a final LayerNorm and a linear head tied to the token embedding producing logits over the vocabulary.">
-            <defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--ink-3)"/></marker></defs>
-            <!-- bottom: ids -->
+      <div class="cards">
+        <article class="card">
+          <p class="card__step">PART 1 · READ</p>
+          <h3>A tokenizer</h3>
+          <p>Models can't read letters, so text is split into reusable chunks. Mine learns the chunks from the data itself, e.g. <code>" the"</code>, <code>" will"</code>.</p>
+          <p class="card__term"><b>Byte-level BPE</b>, 512-token vocabulary, trained in ~7 s</p>
+        </article>
+        <article class="card">
+          <p class="card__step">PART 2 · FOCUS</p>
+          <h3>Attention</h3>
+          <p>For each word, the model decides which earlier words matter most. It can only look backward, never at words that come later.</p>
+          <p class="card__term"><b>Causal multi-head self-attention</b>, written out step by step, tested to match PyTorch's built-in version</p>
+        </article>
+        <article class="card">
+          <p class="card__step">PART 3 · STACK</p>
+          <h3>The model</h3>
+          <p>Attention plus a small neural network, stacked 4 layers deep, ending in a guess for the next chunk of text.</p>
+          <p class="card__term"><b>Decoder-only transformer</b>, 3.29M parameters, 4 layers × 4 heads</p>
+        </article>
+        <article class="card">
+          <p class="card__step">PART 4 · LEARN</p>
+          <h3>Training &amp; tuning</h3>
+          <p>The loop that shows it text, measures how wrong its guesses are, and nudges it to improve. Then I tested different settings to see what worked best.</p>
+          <p class="card__term"><b>AdamW</b>, warmup + cosine schedule, validation-loss checkpointing, a <b>10-run sweep</b></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Attention explorer -->
+  <section class="sec" id="attention">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">02</p>
+        <h2>See it think</h2>
+        <p class="sec__lede">This is the real trained model reading a line from <em>Romeo and Juliet</em>. <strong style="color:var(--text)">Click any
+          piece of text</strong> to see which earlier pieces the model focused on. Brighter means more focus.</p>
+      </div>
+      <div class="panel">
+        <div class="panel__bar">
+          <p class="panel__title">Attention explorer</p>
+          <span class="legend" title="The model has 4 layers, each with 4 attention heads that learn different patterns">layer</span>
+          <div class="seg" role="group" aria-label="Layer" id="attn-layer"></div>
+          <span class="legend">head</span>
+          <div class="seg" role="group" aria-label="Head" id="attn-head"></div>
+        </div>
+        <div class="attn-wrap">
+          <div>
+            <p class="gs-h">The text, split into pieces by my tokenizer</p>
+            <div id="attn-tokens"></div>
+            <p id="attn-caption" aria-live="polite"></p>
+            <p class="gs-h" style="margin-top:1.75rem">What it guesses comes next</p>
+            <ul id="next-token"></ul>
+          </div>
+          <div>
+            <p class="gs-h">All of it at once: each row is a piece, each column what it looked at</p>
+            <svg id="attn-heat" role="img" aria-label="Triangle-shaped heatmap of attention weights. Brighter cells mean more focus. The upper half is empty because the model cannot look at later words."></svg>
+          </div>
+        </div>
+        <p class="panel__note">Real numbers exported from the trained model, not hand-picked. The triangle shape is the rule that
+          the model can only look backward. Different heads learn different habits: some look at the previous piece,
+          some at the start of the line.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Results -->
+  <section class="sec" id="results">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">03</p>
+        <h2>Did it learn?</h2>
+        <p class="sec__lede">"Loss" measures how wrong the guesses are, so lower is better. I always score it on Shakespeare it has never seen.</p>
+      </div>
+
+      <div class="results" style="margin-bottom:2rem">
+        <div class="result">
+          <p class="result__v"><span data-slm="initial_val_loss">—</span> → <span data-slm="best_val_loss">—</span></p>
+          <p class="result__l">Loss before training (pure guessing) vs. after training.</p>
+          <p class="result__s">best at step <span data-slm="best_step">—</span> · <span data-slm="train_minutes">—</span> min on a laptop GPU</p>
+        </div>
+        <div class="result">
+          <p class="result__v">10 tests</p>
+          <p class="result__l">They prove the parts work, e.g. the model really can't peek at future words, and my attention matches PyTorch's.</p>
+          <p class="result__s">pytest · GitHub Actions CI</p>
+        </div>
+        <div class="result">
+          <p class="result__v">10 runs</p>
+          <p class="result__l">I compared context length, model width, and learning rate to find what helps (below).</p>
+          <p class="result__s">same seed, same test text, 1,500 steps each</p>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <div class="panel__bar"><p class="panel__title">Loss while training</p></div>
+          <div style="padding:1rem">
+            <div class="legend-row"><span><i style="background:var(--series-1)"></i>text it trained on</span><span><i style="background:var(--series-2)"></i>text it never saw</span></div>
+            <svg id="loss-chart" class="chart" role="img" aria-label="Loss on training text and on unseen text, by training step."></svg>
+          </div>
+          <p class="panel__note">Both drop fast. After the best point, the unseen-text line flattens while the training line keeps
+            falling: the model starts memorizing. So I keep the best checkpoint, not the last.</p>
+        </div>
+        <div class="panel">
+          <div class="panel__bar"><p class="panel__title">What it writes (unedited)</p></div>
+          <div style="padding:1rem" id="samples"></div>
+          <p class="panel__note">At 3M parameters it learns the <em>shape</em> of a play (names, line breaks, old English) but
+            not real meaning. That's the honest limit at this size.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:2.5rem">
+        <p class="gs-h">Which settings helped? (lower = better, violet = best)</p>
+        <div id="sweep"></div>
+        <ul class="cards" style="margin-top:1.5rem">
+          <li class="card"><h3 style="margin-top:0">Context: more helps, to a point</h3><p>Letting it read 32 → 64 → 128 pieces back kept improving it. 256 was <em>worse</em> in the same training time.</p></li>
+          <li class="card"><h3 style="margin-top:0">Bigger model: small gains</h3><p>Going wider helped a lot at first, then barely, at 2.2× the size. With only ~1 MB of text, data runs out before size matters.</p></li>
+          <li class="card"><h3 style="margin-top:0">Learning rate: not too slow</h3><p>The slowest setting clearly lagged. The fastest was slightly best in this short test.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Technical details -->
+  <section class="sec" id="details">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">04</p>
+        <h2>Technical details</h2>
+        <p class="sec__lede">For engineers. Open any section.</p>
+      </div>
+
+      <details class="details">
+        <summary>Architecture, with tensor shapes <small>model.py</small></summary>
+        <div class="details__body">
+          <svg class="arch" viewBox="0 0 560 640" role="img" aria-label="Model diagram, bottom to top: token ids, token plus position embedding, N transformer blocks each with LayerNorm, causal multi-head attention and a residual add, then LayerNorm, MLP and a residual add; then final LayerNorm and a linear head tied to the token embedding producing logits.">
+            <defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--text-3)"/></marker></defs>
             <rect class="box" x="40" y="580" width="300" height="40" rx="3"/><text class="lbl" x="190" y="605" text-anchor="middle">token ids</text><text class="shape" x="360" y="605">B × T</text>
             <path class="edge" d="M190 580V556" marker-end="url(#ar)"/>
             <rect class="box" x="40" y="512" width="300" height="40" rx="3"/><text class="lbl" x="190" y="537" text-anchor="middle">tok_emb + pos_emb</text><text class="shape" x="360" y="537">B × T × C</text>
             <path class="edge" d="M190 512V486" marker-end="url(#ar)"/>
-            <!-- block -->
-            <rect x="20" y="150" width="340" height="332" rx="4" fill="none" stroke="var(--rule-strong)" stroke-dasharray="5 4"/>
+            <rect x="20" y="150" width="340" height="332" rx="4" fill="none" stroke="var(--line-2)" stroke-dasharray="5 4"/>
             <text class="shape" x="30" y="170">× N blocks (pre-norm residual)</text>
             <rect class="box" x="70" y="430" width="240" height="34" rx="3"/><text class="lbl" x="190" y="452" text-anchor="middle">LayerNorm</text>
             <path class="edge" d="M190 430V408" marker-end="url(#ar)"/>
@@ -181,16 +259,19 @@
             <circle cx="190" cy="172" r="11" class="box"/><text class="lbl" x="190" y="177" text-anchor="middle">+</text>
             <path class="edge" d="M330 310V172H202" marker-end="url(#ar)"/>
             <path class="edge" d="M190 161V138" marker-end="url(#ar)"/>
-            <!-- top -->
             <rect class="box" x="40" y="96" width="300" height="38" rx="3"/><text class="lbl" x="190" y="120" text-anchor="middle">LayerNorm → linear head</text><text class="shape" x="360" y="114">weights tied</text><text class="shape" x="360" y="128">to tok_emb</text>
             <path class="edge" d="M190 96V72" marker-end="url(#ar)"/>
             <rect class="box" x="40" y="28" width="300" height="40" rx="3"/><text class="lbl" x="190" y="53" text-anchor="middle">logits → cross-entropy</text><text class="shape" x="360" y="53">B × T × V</text>
           </svg>
-          <p class="code-cap" style="margin-top:.75rem"><span>This run: T=<span data-slm="config.block_size">—</span> · C=<span data-slm="config.n_embd">—</span> · N=<span data-slm="config.n_layer">—</span> · h=<span data-slm="config.n_head">—</span> · V=<span data-slm="config.vocab_size">—</span></span></p>
-        </figure>
+          <p>This run: T=<span data-slm="config.block_size">—</span>, C=<span data-slm="config.n_embd">—</span>, N=<span data-slm="config.n_layer">—</span>,
+            h=<span data-slm="config.n_head">—</span>, V=<span data-slm="config.vocab_size">—</span>. Pre-norm keeps the residual stream clean; the output
+            head shares weights with the token embedding; residual projections start at std ÷ √2N so activations don't grow with depth.</p>
+        </div>
+      </details>
 
-        <div class="reveal">
-          <p class="code-cap"><span>Attention, written out (no fused kernels)</span><a href="https://github.com/Eddieeq7/small-language-model/blob/main/slm/model.py" target="_blank" rel="noopener">model.py ↗</a></p>
+      <details class="details">
+        <summary>The attention code <small>model.py</small></summary>
+        <div class="details__body">
 <pre class="codeblock"><code><span class="k">def</span> forward(self, x):
     B, T, C = x.shape
     q, k, v = self.qkv(x).split(C, dim=2)
@@ -200,171 +281,61 @@
     v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
 
     att = (q @ k.transpose(-2, -1)) / math.sqrt(self.head_dim)
-    att = att.masked_fill(~self.mask[:, :, :T, :T], float(<span class="k">"-inf"</span>))
-    att = F.softmax(att, dim=-1)          <span class="c"># each row sums to 1</span>
+    att = att.masked_fill(~self.mask[:, :, :T, :T], float(<span class="k">"-inf"</span>))  <span class="c"># no peeking ahead</span>
+    att = F.softmax(att, dim=-1)                                      <span class="c"># each row sums to 1</span>
     att = self.attn_drop(att)
 
-    y = att @ v                           <span class="c"># weighted sum of values</span>
+    y = att @ v                                                       <span class="c"># weighted sum of values</span>
     y = y.transpose(1, 2).contiguous().view(B, T, C)
     <span class="k">return</span> self.resid_drop(self.proj(y))</code></pre>
-          <div class="prose" style="margin-top:1.75rem">
-            <p><strong>Why these choices.</strong> Pre-norm (LayerNorm before each sublayer) keeps the residual
-            stream clean, so gradients flow through deep stacks without warmup tricks. The output head shares weights with the
-            token embedding, which cuts parameters and makes "reading" and "writing" a token use the same vector.
-            Residual projections start at a smaller scale (std ÷ √2N) so the stream doesn't grow with depth. The
-            causal mask is a fixed lower-triangular buffer: position <em>t</em> can only see positions ≤ <em>t</em>,
-            which is exactly what makes this a decoder.</p>
-            <p><strong>What the tests prove</strong>, rather than assume: changing token 10 leaves the outputs at positions
-            0–9 bit-identical (the mask works), every attention row sums to 1 with zeros above the diagonal, the
-            hand-written attention matches PyTorch's fused implementation, the initial loss is ≈ ln(V) (an untrained
-            model is uniform), and the model can overfit a single batch to near-zero loss.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────── Attention explorer ───────────── -->
-  <section class="section section--tint" id="attention">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Inside the trained model</h2>
-        <p class="section__note">Real attention weights from the best checkpoint, run on one prompt. Click a token to see what it attends to.</p>
-      </div>
-      <div class="panel reveal">
-        <div class="panel__bar">
-          <p class="panel__title">Attention explorer</p>
-          <div class="seg" role="group" aria-label="Layer" id="attn-layer"></div>
-          <div class="seg" role="group" aria-label="Head" id="attn-head"></div>
-        </div>
-        <div class="attn-wrap">
-          <div>
-            <p class="gs-h">Prompt, as BPE tokens (· = space, ↵ = newline)</p>
-            <div id="attn-tokens"></div>
-            <p id="attn-caption" aria-live="polite"></p>
-            <p class="gs-h" style="margin-top:1.75rem">Model's next-token guess after the prompt</p>
-            <ul id="next-token"></ul>
-          </div>
-          <div>
-            <p class="gs-h">Attention matrix · rows = query, columns = key</p>
-            <svg id="attn-heat" role="img" aria-label="Lower-triangular heatmap of attention weights for the selected layer and head. Darker cells mean higher weight. The token strip on the left shows the same weights for the selected row."></svg>
-          </div>
-        </div>
-        <p class="panel__note">Exported by <code>python -m slm.export</code> from the trained checkpoint: no hand-picking, no smoothing. Different heads learn visibly different jobs. Some attend to the previous token, some to the start of the line, some spread out.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────── Training ───────────── -->
-  <section class="section" id="training">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Training</h2>
-        <p class="section__note">Loss on held-out text, logged every 250 steps.</p>
-      </div>
-
-      <div class="stats reveal" style="margin-bottom:2.5rem">
-        <div class="stat"><p class="stat__v" data-slm="initial_val_loss">—</p><p class="stat__l">val loss at step 0 (ln <span data-slm="config.vocab_size">—</span> ≈ <span data-slm="ln_vocab">—</span>, i.e. uniform)</p></div>
-        <div class="stat"><p class="stat__v" data-slm="best_val_loss">—</p><p class="stat__l">best val loss · step <span data-slm="best_step">—</span></p></div>
-        <div class="stat"><p class="stat__v" data-slm="best_ppl">—</p><p class="stat__l">val perplexity (per BPE token)</p></div>
-        <div class="stat"><p class="stat__v"><span data-slm="train_minutes">—</span>m</p><p class="stat__l">wall-clock on a laptop GPU (Apple MPS)</p></div>
-      </div>
-
-      <div class="panel reveal">
-        <div class="panel__bar">
-          <p class="panel__title">Cross-entropy loss</p>
-          <div class="legend">
-            <span><i style="background:var(--series-1)"></i>train</span>
-            <span><i style="background:var(--series-2)"></i>validation</span>
-          </div>
-        </div>
-        <div style="padding:1rem"><svg id="loss-chart" class="chart" role="img" aria-label="Train and validation loss versus training step."></svg></div>
-        <p class="panel__note" data-slm-note>The gap that opens after the best step is overfitting. Tiny Shakespeare is ~1 MB, and a model this size starts memorizing it. That's why the training loop evaluates on a held-out tail of the corpus and checkpoints the best <em>validation</em> step instead of the last one.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────── Sweep ───────────── -->
-  <section class="section section--tint" id="sweep-section">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Hyperparameter sweep</h2>
-        <p class="section__note">One axis varied at a time around the baseline (*). 1,500 steps each, same seed, same eval batches. Lower is better; the blue dot is the best in each group.</p>
-      </div>
-      <div id="sweep" class="reveal"></div>
-      <details class="tablealt reveal">
-        <summary>Show as a table</summary>
-        <div class="table-wrap" style="margin-top:1rem">
-          <table class="data-table" id="sweep-table">
-            <thead><tr><th>axis</th><th>value</th><th class="num">best val loss</th><th class="num">params</th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <p class="cap"><span>slm/model.py</span><a href="https://github.com/Eddieeq7/small-language-model/blob/main/slm/model.py" target="_blank" rel="noopener">open on GitHub ↗</a></p>
         </div>
       </details>
-      <div class="prose reveal" style="margin-top:2.5rem" id="sweep-findings">
-        <h3 style="margin-top:0">What the sweep showed</h3>
-        <ul>
-          <li><strong>Context length has a sweet spot at this budget.</strong> Going from 32 to 64 to 128 tokens steadily
-          helps (3.007 → 2.891 → 2.818). 256 is <em>worse</em> (2.870), even though each step sees twice the tokens. My
-          read: with learned position embeddings, the far positions get few useful gradient updates in 1,500 steps,
-          and most of the text's structure (a verse line, a speaker turn) fits well inside 128 tokens.</li>
-          <li><strong>Width helps, with diminishing returns.</strong> C=128 → 256 drops loss by 0.34. C=256 → 384 drops it
-          by only 0.04 for 2.2× the parameters (7.3M), and the 384-wide model had already begun overfitting by step 1,350.
-          On a 1 MB corpus, the data runs out before capacity does.</li>
-          <li><strong>Learning rate: 3e-4 is clearly too slow</strong> (3.089). 3e-3 slightly beats the 1e-3 baseline
-          (2.792 vs 2.818), but that's partly a short-budget effect: a higher rate learns faster early. The full
-          5,000-step baseline run reached the same 2.793.</li>
-        </ul>
-        <p><strong>Caveat:</strong> most runs were still improving at step 1,500, so this ranks configurations at a
-        fixed short compute budget, not at convergence. Every run's log, plus the script that turns them into this page's data, is in
-        the <a href="https://github.com/Eddieeq7/small-language-model/tree/main/results" target="_blank" rel="noopener" style="border-bottom:1px solid var(--rule-strong)">repo's <code>results/</code> folder</a>.</p>
-      </div>
-    </div>
-  </section>
 
-  <!-- ───────────── Tokenizer + samples ───────────── -->
-  <section class="section" id="tokenizer">
-    <div class="shell">
-      <div class="two-col">
-        <div class="reveal">
-          <div class="prose">
-            <h3 style="margin-top:0">The tokenizer</h3>
-            <p>Byte-level BPE. It starts from the 256 byte values, so any UTF-8 text encodes and there's no
-            <code>&lt;unk&gt;</code>. It then repeatedly merges the most frequent adjacent pair into a new token. As in GPT-2,
-            text is pre-split by a regex into words, numbers, and punctuation, and merges never cross those boundaries.
-            That also makes training fast: pairs are counted over unique chunks weighted by frequency, not over the
-            whole corpus. Training it takes about 7 seconds.</p>
-            <p>The first 40 merges it learned, in order:</p>
+      <details class="details">
+        <summary>What the tests check <small>tests/test_slm.py</small></summary>
+        <div class="details__body">
+          <p>Changing token 10 leaves the outputs at positions 0–9 identical (the causal mask works). Every attention row sums to 1
+            with zeros above the diagonal. The hand-written attention equals <code>F.scaled_dot_product_attention</code> to 1e-5.
+            The initial loss is ≈ ln(512) (an untrained model is uniform). The model can overfit a single batch to near-zero loss.
+            The tokenizer round-trips ASCII and Unicode exactly.</p>
+        </div>
+      </details>
+
+      <details class="details">
+        <summary>The tokenizer's first 40 learned merges <small>tokenizer.py</small></summary>
+        <div class="details__body">
+          <p>Starts from the 256 byte values (so any text encodes), then repeatedly merges the most frequent adjacent pair. Text is
+            pre-split GPT-2 style so merges never cross word boundaries. In order (· = space):</p>
+          <ul id="merges"></ul>
+        </div>
+      </details>
+
+      <details class="details">
+        <summary>Sweep table <small>results/sweep</small></summary>
+        <div class="details__body">
+          <div class="table-wrap">
+            <table class="data-table" id="sweep-table">
+              <thead><tr><th>setting</th><th>value</th><th class="num">best val loss</th><th class="num">params</th></tr></thead>
+              <tbody></tbody>
+              <caption>1,500 steps each. Most runs were still improving, so this ranks settings at a fixed short budget, not at convergence. All logs are in the repo's <code>results/</code> folder.</caption>
+            </table>
           </div>
-          <ul id="merges" style="margin-top:1rem"></ul>
         </div>
-        <div class="reveal">
-          <div class="prose"><h3 style="margin-top:0">Unedited samples</h3>
-            <p>Generated from a newline, temperature 0.8, top-k 40. At 3M parameters the model learns the
-            <em>shape</em> of a play (speaker names, verse line lengths, archaic word forms), not sustained meaning.
-            That's the honest ceiling at this scale.</p></div>
-          <div id="samples" style="margin-top:1rem"></div>
-        </div>
-      </div>
+      </details>
     </div>
   </section>
-
 </main>
 
-<footer class="footer">
-  <div class="shell footer__inner">
-    <p>© <span data-year>2026</span> Eduardo Quinones</p>
-    <nav class="footer__links" aria-label="Elsewhere">
-      <a href="../index.html">Home</a>
-      <a href="https://github.com/Eddieeq7" target="_blank" rel="noopener">GitHub</a>
-      <a href="ground-station.html">Next: Ground Station →</a>
-    </nav>
+<footer class="foot">
+  <div class="wrap">
+    <a href="../index.html#projects">← All projects</a>
+    <a href="https://github.com/Eddieeq7/small-language-model" target="_blank" rel="noopener">GitHub ↗</a>
+    <a class="next" href="ground-station.html">Next: Satellite Ground Station →</a>
   </div>
 </footer>
 
-<div class="toast" data-toast role="status" aria-live="polite"></div>
 <script src="data/slm-data.js"></script>
-<script src="base.js" defer></script>
 <script src="slm-viz.js" defer></script>
 </body>
 </html>

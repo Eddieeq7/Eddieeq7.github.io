@@ -1,338 +1,279 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="auto">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Satellite Telemetry Ground Station — Eduardo Quinones</title>
-<meta name="description" content="A C++20 Linux ground station: epoll receive thread, lock-free SPSC ring buffers, CRC-32 binary framing, and per-subsystem loss/duplicate/reorder detection. Interactive pipeline model, architecture, and measured results.">
+<title>Satellite Ground Station — Eduardo Quinones</title>
+<meta name="description" content="A C++20 Linux ground station that receives satellite telemetry over UDP and catches every packet that is lost, duplicated, corrupted, or out of order. Interactive demo, how it works, and measured results.">
 <meta name="author" content="Eduardo Quinones">
-<meta property="og:title" content="Satellite Telemetry Ground Station — Eduardo Quinones">
-<meta property="og:description" content="C++20 · Linux · UDP · epoll · lock-free SPSC ring · CRC-32 · GoogleTest · ThreadSanitizer · tc netem">
+<meta name="theme-color" content="#03060c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="base.css">
-<link rel="stylesheet" href="project.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="case.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace'>EQ</text></svg>">
 <style>
+  /* Ground station: mission-control cyan */
+  :root { --accent: #00d9ff; --accent-soft: rgba(0, 217, 255, .13); }
   #gs-canvas { display: block; width: 100%; height: 380px; }
   @media (max-width: 640px) { #gs-canvas { height: 300px; } }
-  .gs-side { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-top: 1px solid var(--rule); }
+  .gs-side { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-top: 1px solid var(--line); }
   .gs-side > div { padding: 1rem; min-width: 0; }
-  .gs-side > div + div { border-left: 1px solid var(--rule); }
-  @media (max-width: 860px) { .gs-side { grid-template-columns: minmax(0, 1fr); } .gs-side > div + div { border-left: 0; border-top: 1px solid var(--rule); } }
-  .gs-h { font: 500 .66rem/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .75rem; }
-  .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: .5rem; vertical-align: 0; }
-  #gs-stats tfoot td { font: 400 .7rem/1.5 var(--font-mono); color: var(--ink-3); border-bottom: 0; }
-  #gs-log { display: grid; gap: .35rem; font: 400 .72rem/1.5 var(--font-mono); color: var(--ink-2); min-height: 9rem; }
+  .gs-side > div + div { border-left: 1px solid var(--line); }
+  @media (max-width: 860px) { .gs-side { grid-template-columns: minmax(0, 1fr); } .gs-side > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+  .gs-h { font: 600 .68rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin-bottom: .75rem; }
+  .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: .5rem; }
+  #gs-stats tfoot td { font: 400 .7rem/1.5 var(--mono); color: var(--text-3); border-bottom: 0; }
+  #gs-log { display: grid; gap: .35rem; font: 400 .74rem/1.5 var(--mono); color: var(--text-2); min-height: 9rem; }
   #gs-log li { padding-left: .9rem; position: relative; }
   #gs-log li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--warn); }
   #gs-log li[data-k="crit"]::before { background: var(--critical); }
   #gs-log li.muted::before { display: none; }
-  .muted { color: var(--ink-3); font: 400 .72rem/1.5 var(--font-mono); }
-  .hex { display: grid; gap: .3rem; }
-  .hex .f { display: grid; grid-template-columns: 4.5rem 1fr; gap: .75rem; align-items: baseline; }
-  .hex b { font: 500 .66rem/1 var(--font-mono); letter-spacing: .06em; color: var(--ink-3); text-transform: uppercase; }
-  .hex code { background: none; border: 0; padding: 0; font-size: .74rem; color: var(--ink); word-break: break-all; }
-  .hex .flip { color: #fff; background: var(--critical); border-radius: 2px; padding: 0 .15em; }
-  .verdict { margin-top: .9rem; font: 400 .74rem/1.6 var(--font-mono); color: var(--ink-2); }
-  .verdict .ok { color: var(--good); font-weight: 500; }
-  .verdict .bad { color: var(--critical); font-weight: 500; }
-  .verdict code { font-size: .72rem; }
+  .muted { color: var(--text-3); }
   .wire { width: 100%; height: auto; display: block; }
-  .wire text { font-family: var(--font-mono); }
+  .wire text { font-family: var(--mono); }
 </style>
 </head>
-<body class="case">
+<body>
 
-<a class="skip-link" href="#demo">Skip to demo</a>
-<div class="scroll-progress" aria-hidden="true"><span></span></div>
-
-<header class="topbar">
-  <div class="shell topbar__inner">
-    <a class="mark" href="../index.html" aria-label="Eduardo Quinones, home">
-      <span class="mark__glyph">EQ</span>
-      <span class="mark__rule" aria-hidden="true"></span>
-    </a>
-    <nav class="topnav" aria-label="Sections">
-      <a href="#evidence">Evidence</a>
+<header class="bar">
+  <div class="wrap">
+    <a class="bar__home" href="../index.html#projects">EQ <span>← all projects</span></a>
+    <nav aria-label="Sections">
+      <a href="#built">What I built</a>
       <a href="#demo">Demo</a>
-      <a href="#design">Design</a>
       <a href="#results">Results</a>
+      <a href="#details">Details</a>
     </nav>
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
-      <span class="theme-toggle__dot" aria-hidden="true"></span>
-      <span class="theme-toggle__label" data-theme-label>Dark</span>
-    </button>
   </div>
 </header>
 
 <main>
-
-  <section class="case-hero">
-    <div class="shell">
-      <a class="back-link" href="../index.html#projects">← All work</a>
-      <h1 class="case-title reveal">Satellite Telemetry Ground Station<em>.</em></h1>
-      <p class="case-lede reveal">
-        A C++20 Linux service that receives simulated spacecraft telemetry over UDP, validates every
-        frame against a <strong>custom binary protocol with CRC-32</strong>, and accounts for every packet
-        that was <strong>dropped, duplicated, or delivered out of order</strong>, per subsystem. One
-        <strong>epoll</strong> receive thread feeds worker threads through <strong>lock-free
-        single-producer/single-consumer ring buffers</strong>.
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">Independent project · 2026 · C++20 / Linux</p>
+      <h1>Satellite Telemetry Ground Station</h1>
+      <p class="hero__one-liner">
+        Software that receives data from a (simulated) satellite over the network and
+        <strong>catches every packet that gets lost, duplicated, corrupted, or arrives out of order</strong>,
+        fast, using several CPU cores at once.
       </p>
-      <dl class="case-facts reveal">
-        <div><dt>Stack</dt><dd>C++20 · Linux · POSIX sockets</dd></div>
-        <div><dt>Concurrency</dt><dd>epoll · std::atomic · SPSC</dd></div>
-        <div><dt>Verification</dt><dd>GoogleTest · TSan · ASan · netem</dd></div>
-        <div><dt>Source</dt><dd><a href="https://github.com/Eddieeq7/satellite-ground-station" target="_blank" rel="noopener">satellite-ground-station ↗</a></dd></div>
-      </dl>
-    </div>
-    <div class="hero__ambient" aria-hidden="true"></div>
-  </section>
-
-  <!-- ───────────── Evidence chain ───────────── -->
-  <section class="section section--tint" id="evidence">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Claim → evidence</h2>
-        <p class="section__note">Each line of the résumé entry, and where to check it.</p>
-      </div>
-      <div class="chain reveal">
-        <div class="chain__row">
-          <p class="chain__claim">Custom binary protocol over UDP with sequence numbers and CRC-32</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/src/protocol.cpp" target="_blank" rel="noopener">src/protocol.cpp</a> · <a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/include/gs/crc32.hpp" target="_blank" rel="noopener">crc32.hpp</a> · <a href="#wire">wire format ↓</a></p>
-          <span class="chain__status">In repo</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Detects dropped, duplicate, and out-of-order packets</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/src/sequence_tracker.cpp" target="_blank" rel="noopener">src/sequence_tracker.cpp</a> · <a href="#demo">live in the demo ↓</a></p>
-          <span class="chain__status">Tested</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Non-blocking epoll receive thread → worker threads via a lock-free SPSC ring buffer</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/src/station.cpp" target="_blank" rel="noopener">src/station.cpp</a> · <a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/include/gs/spsc_ring.hpp" target="_blank" rel="noopener">spsc_ring.hpp</a></p>
-          <span class="chain__status">In repo</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Validated on degraded links with Linux tc netem (5% loss + jitter)</p>
-          <p class="chain__proof"><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/scripts/netem.sh" target="_blank" rel="noopener">scripts/netem.sh</a>, run in CI: 5.00% injected → 5.07% measured</p>
-          <span class="chain__status">CI passing</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Race conditions checked with ThreadSanitizer; protocol covered by GoogleTest</p>
-          <p class="chain__proof">48 tests, run in CI under Release, TSan, and ASan · <a href="https://github.com/Eddieeq7/satellite-ground-station/tree/main/tests" target="_blank" rel="noopener">tests/</a></p>
-          <span class="chain__status">CI passing</span>
-        </div>
-        <div class="chain__row">
-          <p class="chain__claim">Throughput and tail latency under load</p>
-          <p class="chain__proof">Measured on a 2-vCPU CI runner, numbers in <a href="#results">Results ↓</a>. Dedicated-hardware numbers still to come.</p>
-          <span class="chain__status" data-s="partial">Partial</span>
-        </div>
+      <ul class="chips" aria-label="Technologies">
+        <li>C++20</li><li>Linux</li><li>UDP sockets</li><li>epoll</li><li>Multithreading</li>
+        <li>Lock-free queue</li><li>CRC-32</li><li>GoogleTest</li><li>ThreadSanitizer</li><li>tc netem</li>
+      </ul>
+      <div class="actions">
+        <a class="btn btn--solid" href="#demo">Try the live demo ↓</a>
+        <a class="btn" href="https://github.com/Eddieeq7/satellite-ground-station" target="_blank" rel="noopener">View the code ↗</a>
       </div>
     </div>
   </section>
 
-  <!-- ───────────── Demo ───────────── -->
-  <section class="section" id="demo">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">The pipeline, running</h2>
-        <p class="section__note">Turn up loss, jitter, or corruption, or overload the workers, and watch how each anomaly gets classified.</p>
+  <!-- 1. What I built -->
+  <section class="sec" id="built">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">01</p>
+        <h2>What I built</h2>
+        <p class="sec__lede">Four pieces, each doing one job. A packet passes through them in this order.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <p class="card__step">STEP 1 · RECEIVE</p>
+          <h3>A receiver that never falls behind</h3>
+          <p>One thread waits for packets and, the moment they arrive, grabs them in batches of up to 64 so the network buffer never overflows.</p>
+          <p class="card__term"><b>epoll</b> (edge-triggered) + <b>recvmmsg</b> on a non-blocking UDP socket</p>
+        </article>
+        <article class="card">
+          <p class="card__step">STEP 2 · HAND OFF</p>
+          <h3>A queue with no locks</h3>
+          <p>Packets go to worker threads through a queue designed so the two sides never wait on each other. Each satellite subsystem always goes to the same worker.</p>
+          <p class="card__term"><b>Lock-free single-producer/single-consumer ring buffer</b> using C++ atomics</p>
+        </article>
+        <article class="card">
+          <p class="card__step">STEP 3 · CHECK</p>
+          <h3>A corruption check</h3>
+          <p>Every packet carries a checksum. If even one bit changed on the way, the worker rejects it.</p>
+          <p class="card__term">Custom <b>binary protocol</b> with <b>CRC-32</b>, written byte by byte</p>
+        </article>
+        <article class="card">
+          <p class="card__step">STEP 4 · ACCOUNT</p>
+          <h3>A tracker for every packet</h3>
+          <p>Each packet is numbered. Gaps mean <em>lost</em>, repeats mean <em>duplicate</em>, late arrivals mean <em>out of order</em>, and the counts fix themselves when a "lost" packet shows up late.</p>
+          <p class="card__term"><b>Sequence numbers</b> + a sliding-window bitmap, per subsystem</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Demo -->
+  <section class="sec" id="demo">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">02</p>
+        <h2>Watch it work</h2>
+        <p class="sec__lede">Colored boxes are packets from three satellite subsystems. Make the link worse with the sliders and watch the
+          ground station catch each problem. Right side: the workers. Table below: what they counted.</p>
       </div>
 
-      <div class="panel reveal">
+      <div class="panel">
         <div class="panel__bar">
-          <p class="panel__title">Ground station · browser model</p>
+          <p class="panel__title">Live pipeline</p>
           <div class="seg" role="group" aria-label="Worker threads">
             <button type="button" data-workers="1" aria-pressed="false">1 worker</button>
-            <button type="button" data-workers="2" aria-pressed="true">2</button>
-            <button type="button" data-workers="3" aria-pressed="false">3</button>
+            <button type="button" data-workers="2" aria-pressed="true">2 workers</button>
+            <button type="button" data-workers="3" aria-pressed="false">3 workers</button>
           </div>
           <button class="btn btn--sm" type="button" id="gs-play">Pause</button>
-          <button class="btn btn--sm btn--ghost" type="button" id="gs-burst">Burst ×36</button>
-          <button class="btn btn--sm btn--ghost" type="button" id="gs-reset">Reset</button>
+          <button class="btn btn--sm" type="button" id="gs-burst">Send a burst</button>
+          <button class="btn btn--sm" type="button" id="gs-reset">Reset</button>
         </div>
         <div class="controls">
+          <div class="ctl"><label for="c-loss">Packets lost <output></output></label><input id="c-loss" type="range" min="0" max="30" value="5" data-gs="loss"></div>
+          <div class="ctl"><label for="c-jit">Delay jitter <output></output></label><input id="c-jit" type="range" min="0" max="2500" step="100" value="600" data-gs="jitter"></div>
+          <div class="ctl"><label for="c-dup">Duplicated <output></output></label><input id="c-dup" type="range" min="0" max="20" value="3" data-gs="dup"></div>
+          <div class="ctl"><label for="c-cor">Corrupted <output></output></label><input id="c-cor" type="range" min="0" max="20" value="2" data-gs="corrupt"></div>
           <div class="ctl"><label for="c-rate">Send rate <output></output></label><input id="c-rate" type="range" min="1" max="20" value="6" data-gs="rate"></div>
-          <div class="ctl"><label for="c-loss">Loss <output></output></label><input id="c-loss" type="range" min="0" max="30" value="5" data-gs="loss"></div>
-          <div class="ctl"><label for="c-jit">Jitter <output></output></label><input id="c-jit" type="range" min="0" max="2500" step="100" value="600" data-gs="jitter"></div>
-          <div class="ctl"><label for="c-dup">Duplication <output></output></label><input id="c-dup" type="range" min="0" max="20" value="3" data-gs="dup"></div>
-          <div class="ctl"><label for="c-cor">Bit errors <output></output></label><input id="c-cor" type="range" min="0" max="20" value="2" data-gs="corrupt"></div>
           <div class="ctl"><label for="c-svc">Worker speed <output></output></label><input id="c-svc" type="range" min="1" max="20" value="7" data-gs="service"></div>
         </div>
         <div class="panel__bar" style="border-bottom:0;padding-bottom:0">
-          <div class="legend" style="margin-left:auto" aria-label="Subsystems">
-            <span><i style="background:var(--series-1)"></i>EPS</span>
-            <span><i style="background:var(--series-2)"></i>ADCS</span>
+          <div class="legend" aria-label="Legend">
+            <span><i style="background:var(--series-1)"></i>EPS (power)</span>
+            <span><i style="background:var(--series-2)"></i>ADCS (orientation)</span>
             <span><i style="background:var(--series-3)"></i>THERMAL</span>
-            <span><i style="background:none;outline:1px dashed var(--ink);outline-offset:-1px"></i>duplicate</span>
-            <span><i style="background:var(--critical);border-radius:50%"></i>bit flipped</span>
+            <span><i style="outline:1px dashed var(--text);outline-offset:-1px"></i>duplicate</span>
+            <span><i style="background:var(--critical);border-radius:50%"></i>corrupted in transit</span>
           </div>
         </div>
-        <canvas id="gs-canvas" role="img" aria-label="Animated diagram: telemetry packets from three subsystems cross an impaired link, arrive at a UDP socket, are drained by an epoll receive thread into per-worker ring buffers, and are classified by worker threads. Counts are in the table below."></canvas>
+        <canvas id="gs-canvas" role="img" aria-label="Animated diagram: packets from three subsystems cross an unreliable link, are received, queued per worker, and checked. Counts are in the table below."></canvas>
         <div class="gs-side">
           <div>
-            <p class="gs-h">Sequence tracker, per APID</p>
+            <p class="gs-h">What the ground station counted</p>
             <div class="table-wrap">
               <table class="data-table" id="gs-stats">
-                <thead><tr><th>APID</th><th class="num">received</th><th class="num">lost</th><th class="num">dup</th><th class="num">reordered</th></tr></thead>
+                <thead><tr><th>Subsystem</th><th class="num">received</th><th class="num">lost</th><th class="num">dup</th><th class="num">out of order</th></tr></thead>
                 <tbody></tbody><tfoot></tfoot>
               </table>
             </div>
-            <p class="gs-h" style="margin-top:1.25rem">Anomaly log</p>
-            <ul id="gs-log" aria-live="polite"></ul>
           </div>
           <div>
-            <p class="gs-h">Last frame decoded · 30 bytes on the wire</p>
-            <div id="gs-inspector"></div>
+            <p class="gs-h">Problems it caught, newest first</p>
+            <ul id="gs-log" aria-live="polite"></ul>
           </div>
         </div>
-        <p class="panel__note">
-          This runs in your browser and isn't live data from the C++ binary. It's a JavaScript model of the
-          same design: the same frame layout and CRC-32, the same sequence-tracking algorithm (ported line for
-          line), and the same APID→worker sharding, slowed down roughly 10,000× so you can see individual packets. Each
-          worker reads only its own ring, which keeps every ring single-producer/single-consumer.
-        </p>
+        <p class="panel__note">This animation runs in your browser and is slowed way down so you can follow single packets. It uses the same
+          packet format, checksum, and counting logic as the C++ code. The real program handles packets in microseconds.</p>
       </div>
     </div>
   </section>
 
-  <!-- ───────────── Design ───────────── -->
-  <section class="section section--tint" id="design">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Design</h2>
-        <p class="section__note">The decisions that shaped the code, and why.</p>
+  <!-- 3. Results -->
+  <section class="sec" id="results">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">03</p>
+        <h2>Does it actually work?</h2>
+        <p class="sec__lede">Tested automatically on Linux every time the code changes.</p>
+      </div>
+      <div class="results">
+        <div class="result">
+          <p class="result__v">5% → 5.07%</p>
+          <p class="result__l">I made the network drop 5% of packets on purpose. The ground station measured 5.07%.</p>
+          <p class="result__s">Linux tc netem · 60,000 packets · 2 ms ± 1 ms jitter</p>
+        </div>
+        <div class="result">
+          <p class="result__v">48 tests</p>
+          <p class="result__l">All pass, including under ThreadSanitizer (finds threading bugs) and AddressSanitizer (finds memory bugs).</p>
+          <p class="result__s">GoogleTest · GitHub Actions CI</p>
+        </div>
+        <div class="result">
+          <p class="result__v">0 missed</p>
+          <p class="result__l">A test flips every single bit of a packet, one at a time. Every corrupted version is rejected.</p>
+          <p class="result__s">CRC-32 · tests/test_protocol.cpp</p>
+        </div>
+      </div>
+      <p class="note">Speed: on a shared 2-core CI machine it handled ~148K packets/s with zero loss inside the pipeline. That run had the
+        sender and receiver competing for the same two cores; numbers on dedicated hardware are still to be measured.
+        Full numbers in <a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/RESULTS.md" target="_blank" rel="noopener">RESULTS.md ↗</a>.</p>
+    </div>
+  </section>
+
+  <!-- 4. Technical details -->
+  <section class="sec" id="details">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="sec__num">04</p>
+        <h2>Technical details</h2>
+        <p class="sec__lede">For engineers. Open any section.</p>
       </div>
 
-      <figure class="reveal" id="wire" style="margin:0 0 3rem">
-        <p class="code-cap"><span>Wire format · little-endian, serialized byte by byte</span><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/include/gs/protocol.hpp" target="_blank" rel="noopener">protocol.hpp ↗</a></p>
-        <svg class="wire" viewBox="0 0 900 96" role="img" aria-label="Frame layout: magic 2 bytes, version 1, apid 1, sequence 4, transmit timestamp 8, payload length 2, payload N bytes, CRC-32 4 bytes.">
-          <g font-size="12">
-            <rect x="0" y="20" width="80" height="40" fill="none" stroke="var(--rule-strong)"/><text x="40" y="44" text-anchor="middle" fill="var(--ink)">magic</text><text x="40" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">2 · 0x5A47</text>
-            <rect x="80" y="20" width="50" height="40" fill="none" stroke="var(--rule-strong)"/><text x="105" y="44" text-anchor="middle" fill="var(--ink)">ver</text><text x="105" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">1</text>
-            <rect x="130" y="20" width="60" height="40" fill="var(--accent-soft)" stroke="var(--rule-strong)"/><text x="160" y="44" text-anchor="middle" fill="var(--ink)">apid</text><text x="160" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">1 · shard</text>
-            <rect x="190" y="20" width="110" height="40" fill="var(--accent-soft)" stroke="var(--rule-strong)"/><text x="245" y="44" text-anchor="middle" fill="var(--ink)">seq</text><text x="245" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">4 · per APID</text>
-            <rect x="300" y="20" width="170" height="40" fill="none" stroke="var(--rule-strong)"/><text x="385" y="44" text-anchor="middle" fill="var(--ink)">tx_ns</text><text x="385" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">8 · CLOCK_MONOTONIC</text>
-            <rect x="470" y="20" width="70" height="40" fill="none" stroke="var(--rule-strong)"/><text x="505" y="44" text-anchor="middle" fill="var(--ink)">len</text><text x="505" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">2 · ≤1024</text>
-            <rect x="540" y="20" width="230" height="40" fill="none" stroke="var(--rule-strong)" stroke-dasharray="4 3"/><text x="655" y="44" text-anchor="middle" fill="var(--ink)">payload</text><text x="655" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">N bytes</text>
-            <rect x="770" y="20" width="129" height="40" fill="none" stroke="var(--accent)"/><text x="834" y="44" text-anchor="middle" fill="var(--ink)">crc32</text><text x="834" y="78" text-anchor="middle" fill="var(--ink-3)" font-size="10">4 · over [0, 18+N)</text>
-            <text x="0" y="12" fill="var(--ink-3)" font-size="10">0</text><text x="300" y="12" fill="var(--ink-3)" font-size="10">8</text><text x="540" y="12" fill="var(--ink-3)" font-size="10">18</text>
-          </g>
-        </svg>
-      </figure>
-
-      <div class="two-col">
-        <div class="prose reveal">
-          <h3 style="margin-top:0">One ring per worker, sharded by APID</h3>
-          <p>A single-producer/single-consumer queue needs only one acquire load and one release store per
-          operation: no compare-and-swap loops and no locks. To keep every ring truly SPSC with several workers,
-          the receive thread routes each frame by <code>apid % workers</code>. That gives a second guarantee for free:
-          each subsystem's sequence space belongs to exactly one thread, so the sequence tracker needs no
-          synchronization at all.</p>
-
-          <h3>Keeping the hot path off shared cache lines</h3>
-          <p>Head and tail indices sit on separate cache lines so the producer and consumer don't invalidate
-          each other's line on every operation (false sharing). Each side also keeps a <em>cached copy</em> of
-          the other's index and reloads the real atomic only when the ring looks full or empty. In steady
-          state, most pushes and pops touch no shared memory at all.</p>
-
-          <h3>Edge-triggered epoll, drained to EAGAIN</h3>
-          <p>The socket is non-blocking and registered with <code>EPOLLET</code>, so there's one wakeup per burst
-          instead of one per datagram. The catch with edge-triggering is that you must drain the socket until
-          <code>EAGAIN</code> or you'll never get another edge. On Linux the drain uses <code>recvmmsg</code> to pull up
-          to 64 datagrams per syscall.</p>
-
-          <h3>Backpressure is counted, never hidden</h3>
-          <p>If a worker's ring is full, the receive thread drops the frame and increments
-          <code>ring_full_drops</code> rather than blocking. Blocking would stop the socket drain, and the kernel would then
-          drop packets silently. A dropped packet you can count beats one you never see. (Hit <em>Burst</em>
-          with one slow worker in the demo to watch this happen.)</p>
-
-          <h3>The cost of static sharding</h3>
-          <p>Sharding by <code>apid % workers</code> isn't free. With three subsystems and two workers, worker 1
-          owns two of them and carries two-thirds of the load, and you can see its ring fill first in the demo. That
-          trade buys lock-free sequence tracking. A real deployment would assign APIDs to workers by measured
-          packet rate rather than by modulo.</p>
+      <details class="details">
+        <summary>The packet format <small>protocol.hpp</small></summary>
+        <div class="details__body">
+          <svg class="wire" viewBox="0 0 900 96" role="img" aria-label="Frame layout: magic 2 bytes, version 1, apid 1, sequence 4, timestamp 8, length 2, payload N bytes, CRC-32 4 bytes.">
+            <g font-size="12">
+              <rect x="0" y="20" width="80" height="40" fill="none" stroke="var(--line-2)"/><text x="40" y="44" text-anchor="middle" fill="var(--text)">magic</text><text x="40" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">2 bytes</text>
+              <rect x="80" y="20" width="50" height="40" fill="none" stroke="var(--line-2)"/><text x="105" y="44" text-anchor="middle" fill="var(--text)">ver</text><text x="105" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">1</text>
+              <rect x="130" y="20" width="60" height="40" fill="var(--accent-soft)" stroke="var(--line-2)"/><text x="160" y="44" text-anchor="middle" fill="var(--text)">apid</text><text x="160" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">1 · which</text>
+              <rect x="190" y="20" width="110" height="40" fill="var(--accent-soft)" stroke="var(--line-2)"/><text x="245" y="44" text-anchor="middle" fill="var(--text)">seq</text><text x="245" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">4 · packet number</text>
+              <rect x="300" y="20" width="170" height="40" fill="none" stroke="var(--line-2)"/><text x="385" y="44" text-anchor="middle" fill="var(--text)">tx_ns</text><text x="385" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">8 · send time</text>
+              <rect x="470" y="20" width="70" height="40" fill="none" stroke="var(--line-2)"/><text x="505" y="44" text-anchor="middle" fill="var(--text)">len</text><text x="505" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">2</text>
+              <rect x="540" y="20" width="230" height="40" fill="none" stroke="var(--line-2)" stroke-dasharray="4 3"/><text x="655" y="44" text-anchor="middle" fill="var(--text)">payload</text><text x="655" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">sensor data</text>
+              <rect x="770" y="20" width="129" height="40" fill="none" stroke="var(--accent)"/><text x="834" y="44" text-anchor="middle" fill="var(--text)">crc32</text><text x="834" y="78" text-anchor="middle" fill="var(--text-3)" font-size="10">4 · checksum</text>
+            </g>
+          </svg>
+          <p>Little-endian, serialized byte by byte, so it never depends on the CPU's byte order or struct padding. Decoding rejects
+            short frames, wrong magic/version, length mismatches, oversized payloads, and CRC failures.</p>
         </div>
+      </details>
 
-        <div class="reveal">
-          <p class="code-cap"><span>The whole SPSC hot path</span><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/include/gs/spsc_ring.hpp" target="_blank" rel="noopener">spsc_ring.hpp ↗</a></p>
-<pre class="codeblock"><code><span class="c">// Producer thread only.</span>
-<span class="k">bool</span> try_push(T&amp;&amp; v) <span class="k">noexcept</span> {
+      <details class="details">
+        <summary>Why one queue per worker, split by subsystem <small>station.cpp</small></summary>
+        <div class="details__body">
+          <p>A single-producer/single-consumer queue needs only one atomic load and one atomic store per operation, with no locks and
+            no compare-and-swap loops. To keep every queue truly single-producer/single-consumer with several workers, the receiver
+            routes each packet by <code>apid % workers</code>. A bonus: each subsystem's packet numbers belong to exactly one
+            thread, so the tracker needs no locking at all.</p>
+          <p><strong>The trade-off:</strong> with three subsystems and two workers, one worker gets two-thirds of the traffic (you
+            can watch its queue fill first in the demo). A real deployment would assign subsystems by measured traffic.</p>
+          <p><strong>Backpressure is counted, never hidden.</strong> If a queue is full, the receiver drops the packet and counts it
+            instead of blocking. Blocking would stop it reading the socket, and the kernel would then drop packets silently.</p>
+        </div>
+      </details>
+
+      <details class="details">
+        <summary>The lock-free queue, in full <small>spsc_ring.hpp</small></summary>
+        <div class="details__body">
+          <p>Head and tail live on separate cache lines (no false sharing). Each side caches the other's index and only re-reads
+            the shared atomic when the queue looks full or empty, so most operations touch no shared memory.</p>
+<pre class="codeblock"><code><span class="k">bool</span> try_push(T&amp;&amp; v) <span class="k">noexcept</span> {            <span class="c">// producer thread only</span>
     <span class="k">const</span> size_t tail = tail_.load(memory_order_relaxed);
     <span class="k">if</span> (tail - head_cache_ &gt; mask_) {
         head_cache_ = head_.load(memory_order_acquire);
-        <span class="k">if</span> (tail - head_cache_ &gt; mask_) <span class="k">return false</span>; <span class="c">// full</span>
+        <span class="k">if</span> (tail - head_cache_ &gt; mask_) <span class="k">return false</span>;   <span class="c">// full</span>
     }
     slots_[tail &amp; mask_] = std::move(v);
-    tail_.store(tail + 1, memory_order_release);
+    tail_.store(tail + 1, memory_order_release);       <span class="c">// publish</span>
     <span class="k">return true</span>;
 }
 
-<span class="c">// Consumer thread only.</span>
-std::optional&lt;T&gt; try_pop() <span class="k">noexcept</span> {
+std::optional&lt;T&gt; try_pop() <span class="k">noexcept</span> {              <span class="c">// consumer thread only</span>
     <span class="k">const</span> size_t head = head_.load(memory_order_relaxed);
     <span class="k">if</span> (head == tail_cache_) {
         tail_cache_ = tail_.load(memory_order_acquire);
-        <span class="k">if</span> (head == tail_cache_) <span class="k">return</span> std::nullopt;
+        <span class="k">if</span> (head == tail_cache_) <span class="k">return</span> std::nullopt;   <span class="c">// empty</span>
     }
     T v = std::move(slots_[head &amp; mask_]);
     head_.store(head + 1, memory_order_release);
     <span class="k">return</span> v;
 }</code></pre>
-
-          <p class="code-cap" style="margin-top:2rem"><span>Classifying a sequence number (condensed)</span><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/src/sequence_tracker.cpp" target="_blank" rel="noopener">sequence_tracker.cpp ↗</a></p>
-<pre class="codeblock"><code><span class="c">// Signed distance handles uint32 wrap-around.</span>
-<span class="k">const</span> int32_t delta = int32_t(seq - highest_);
-
-<span class="k">if</span> (delta &gt; 0) {               <span class="c">// ahead: gap of delta-1 is lost</span>
-    clear_skipped_slots(); highest_ = seq; mark(seq);
-    stats_.lost += delta - 1;
-} <span class="k">else if</span> (delta == 0 || seen(seq)) {
-    ++stats_.duplicates;        <span class="c">// already in the window</span>
-} <span class="k">else if</span> (-delta &lt; kWindow) {
-    mark(seq);                  <span class="c">// late: was counted lost,</span>
-    ++stats_.reordered;         <span class="c">// now reclassify it</span>
-    --stats_.lost;
-}</code></pre>
+          <p class="cap"><span>include/gs/spsc_ring.hpp</span><a href="https://github.com/Eddieeq7/satellite-ground-station/blob/main/include/gs/spsc_ring.hpp" target="_blank" rel="noopener">open on GitHub ↗</a></p>
         </div>
-      </div>
-    </div>
-  </section>
+      </details>
 
-  <!-- ───────────── Results ───────────── -->
-  <section class="section" id="results">
-    <div class="shell">
-      <div class="section__head reveal">
-        <h2 class="section__title">Measured results</h2>
-        <p class="section__note">Copied from real runs. Each table says where it ran.</p>
-      </div>
-
-      <div class="stats reveal" style="margin-bottom:3rem">
-        <div class="stat"><p class="stat__v">48</p><p class="stat__l">GoogleTest tests · Release, TSan, ASan</p></div>
-        <div class="stat"><p class="stat__v">5.07%</p><p class="stat__l">loss measured with 5% injected by netem</p></div>
-        <div class="stat"><p class="stat__v">0</p><p class="stat__l">CRC escapes: every single-bit flip in a frame is rejected (tested)</p></div>
-        <div class="stat"><p class="stat__v">0%</p><p class="stat__l">pipeline loss up to the sender's limit on every run</p></div>
-      </div>
-
-      <div class="two-col">
-        <div class="reveal">
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Degraded link</th><th class="num">value</th></tr></thead>
-              <tbody>
-                <tr><td>netem impairment</td><td class="num">loss 5% · delay 2 ms ± 1 ms</td></tr>
-                <tr><td>frames sent</td><td class="num">60,000 @ 20K/s</td></tr>
-                <tr><td>loss measured by station</td><td class="num">5.07%</td></tr>
-                <tr><td>reordered (caused by jitter)</td><td class="num">36,200</td></tr>
-                <tr><td>duplicates · CRC errors</td><td class="num">0 · 0</td></tr>
-              </tbody>
-              <caption>Linux, GitHub Actions ubuntu-24.04, <code>tc qdisc add dev lo root netem …</code>. Loss at the very end of a stream can't be seen from sequence numbers alone; the check allows for it.</caption>
-            </table>
-          </div>
-        </div>
-        <div class="reveal">
+      <details class="details">
+        <summary>Benchmark numbers <small>RESULTS.md</small></summary>
+        <div class="details__body">
           <div class="table-wrap">
             <table class="data-table">
               <thead><tr><th>target pps</th><th class="num">achieved</th><th class="num">loss</th><th class="num">p50 µs</th><th class="num">p99 µs</th></tr></thead>
@@ -341,40 +282,35 @@ std::optional&lt;T&gt; try_pop() <span class="k">noexcept</span> {
                 <tr><td>250,000</td><td class="num">141,707</td><td class="num">0%</td><td class="num">167</td><td class="num">1,560</td></tr>
                 <tr><td>500,000</td><td class="num">148,507</td><td class="num">0%</td><td class="num">167</td><td class="num">1,340</td></tr>
               </tbody>
-              <caption>Loopback benchmark (<code>gs_bench</code>, 1 worker, recvmmsg/sendmmsg) on a <strong>2-vCPU shared CI VM</strong>, where the pacing sender, receiver, and worker all compete for two cores, so this measures CPU contention as much as the pipeline. Latency is send → processed, including the kernel UDP path. Numbers on dedicated multi-core hardware still to come.</caption>
+              <caption>Loopback benchmark, 1 worker, 2-vCPU shared CI VM (sender, receiver and worker compete for two cores). Latency is send → processed, including the kernel UDP path.</caption>
             </table>
           </div>
         </div>
-      </div>
+      </details>
 
-      <div class="prose reveal" style="margin-top:3rem">
-        <h3 style="margin-top:0">Run it yourself</h3>
-      </div>
-<pre class="codeblock reveal" style="margin-top:1rem"><code>cmake -S . -B build &amp;&amp; cmake --build build -j
-ctest --test-dir build --output-on-failure                 <span class="c"># 48 tests</span>
-cmake -S . -B tsan -DGS_SANITIZE=thread &amp;&amp; cmake --build tsan -j &amp;&amp; ./tsan/gs_tests
+      <details class="details">
+        <summary>Run it yourself</summary>
+        <div class="details__body">
+<pre class="codeblock"><code>cmake -S . -B build &amp;&amp; cmake --build build -j
+ctest --test-dir build --output-on-failure        <span class="c"># 48 tests</span>
 
 ./build/gs_station --port 9000 --workers 2 --seconds 10 &amp;
-./build/gs_sim --port 9000 --count 100000 --rate 20000 --loss 0.05 --dup 0.01 --reorder 0.02
-sudo scripts/netem.sh build                                <span class="c"># Linux: real link impairment</span></code></pre>
+./build/gs_sim --port 9000 --count 100000 --rate 20000 --loss 0.05
+sudo scripts/netem.sh build                       <span class="c"># Linux: real network impairment</span></code></pre>
+        </div>
+      </details>
     </div>
   </section>
-
 </main>
 
-<footer class="footer">
-  <div class="shell footer__inner">
-    <p>© <span data-year>2026</span> Eduardo Quinones</p>
-    <nav class="footer__links" aria-label="Elsewhere">
-      <a href="../index.html">Home</a>
-      <a href="https://github.com/Eddieeq7" target="_blank" rel="noopener">GitHub</a>
-      <a href="small-language-model.html">Next: Small Language Model →</a>
-    </nav>
+<footer class="foot">
+  <div class="wrap">
+    <a href="../index.html#projects">← All projects</a>
+    <a href="https://github.com/Eddieeq7/satellite-ground-station" target="_blank" rel="noopener">GitHub ↗</a>
+    <a class="next" href="small-language-model.html">Next: Small Language Model →</a>
   </div>
 </footer>
 
-<div class="toast" data-toast role="status" aria-live="polite"></div>
-<script src="base.js" defer></script>
 <script src="ground-station-viz.js" defer></script>
 </body>
 </html>

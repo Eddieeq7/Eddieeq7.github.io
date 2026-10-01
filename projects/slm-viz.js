@@ -46,14 +46,14 @@
     host.innerHTML = "";
     for (let i = 0; i < n; i++) {
       const b = document.createElement("button");
-      b.type = "button"; b.textContent = `${prefix}${i}`;
+      b.type = "button"; b.textContent = `${prefix}${i + 1}`;
       b.setAttribute("aria-pressed", String(i === get()));
       b.addEventListener("click", () => { set(i); [...host.children].forEach((c, j) => c.setAttribute("aria-pressed", String(j === i))); renderAttn(); });
       host.appendChild(b);
     }
   };
-  mkSeg(layerSeg, D.attention.length, () => layer, (v) => (layer = v), "L");
-  mkSeg(headSeg, D.attention[0].length, () => head, (v) => (head = v), "H");
+  mkSeg(layerSeg, D.attention.length, () => layer, (v) => (layer = v), "");
+  mkSeg(headSeg, D.attention[0].length, () => head, (v) => (head = v), "");
 
   const strip = $("#attn-tokens");
   strip.innerHTML = tokens.map((t, i) => `<button type="button" class="tok" data-i="${i}" title="token ${i} · id ${D.token_ids[i]}">${escapeHtml(vis(t))}</button>`).join("");
@@ -81,8 +81,8 @@
       b.classList.toggle("is-future", j > query);
     });
     const top = A[query].map((w, j) => ({ w, j })).filter((o) => o.j <= query).sort((a, b) => b.w - a.w).slice(0, 3);
-    $("#attn-caption").innerHTML = `Layer ${layer}, head ${head}: <b>${escapeHtml(vis(tokens[query]))}</b> (position ${query}) attends most to ` +
-      top.map((o) => `<b>${escapeHtml(vis(tokens[o.j]))}</b> ${(o.w * 100).toFixed(0)}%`).join(", ") + ". Future positions are masked to zero.";
+    $("#attn-caption").innerHTML = `When the model reads <b>${escapeHtml(vis(tokens[query]))}</b>, it focuses most on ` +
+      top.map((o) => `<b>${escapeHtml(vis(tokens[o.j]))}</b> (${(o.w * 100).toFixed(0)}%)`).join(", ") + `. <span style="color:var(--text-3)">Layer ${layer + 1}, head ${head + 1}.</span>`;
 
     // heatmap matrix
     heat.innerHTML = "";
@@ -159,7 +159,7 @@
   function sweepCharts() {
     const host = $("#sweep"); if (!host || !D.sweep) return;
     host.innerHTML = "";
-    const names = { block_size: "Context length (tokens)", n_embd: "Embedding size", lr: "Learning rate" };
+    const names = { block_size: "Context length (pieces it can read back)", n_embd: "Model width (embedding size)", lr: "Learning rate" };
     const all = D.sweep.results.map((r) => r.best_val_loss);
     const lo = Math.floor(Math.min(...all) * 10) / 10 - 0.1, hi = Math.ceil(Math.max(...all) * 10) / 10;
     Object.keys(names).forEach((axis) => {
@@ -181,7 +181,7 @@
         const x = m.l + i * bw + bw * 0.2, w = bw * 0.6, y = Y(r.best_val_loss);
         const isBase = r.value === D.sweep.baseline[axis];
         // Dot plot, not bars: the y-axis doesn't start at zero, so bar length would mislead.
-        el("circle", { cx: x + w / 2, cy: y, r: 6, fill: r.best_val_loss === best ? "var(--series-1)" : "var(--ink-3)", stroke: "var(--paper-2)", "stroke-width": 2 }, svg);
+        el("circle", { cx: x + w / 2, cy: y, r: 6, fill: r.best_val_loss === best ? "var(--accent)" : "var(--ink-3)", stroke: "var(--paper-2)", "stroke-width": 2 }, svg);
         el("text", { x: x + w / 2, y: y - 12, "text-anchor": "middle", class: "dlabel" }, svg).textContent = r.best_val_loss.toFixed(3);
         el("text", { x: x + w / 2, y: H - 8, "text-anchor": "middle", class: "tick" }, svg).textContent = axis === "lr" ? r.value.toExponential(0).replace("e-", "e-") : r.value + (isBase ? "*" : "");
         const hit = el("rect", { x: m.l + i * bw, y: m.t, width: bw, height: H - m.t - m.b, fill: "transparent" }, svg);
@@ -190,12 +190,12 @@
       });
     });
     const tb = $("#sweep-table tbody");
-    if (tb) tb.innerHTML = D.sweep.results.map((r) => `<tr><td>${r.axis}</td><td>${r.value}</td><td class="num">${fmt(r.best_val_loss)}</td><td class="num">${(r.params / 1e6).toFixed(2)}M</td></tr>`).join("");
+    if (tb) tb.innerHTML = D.sweep.results.map((r) => `<tr><td>${({ block_size: "context length", n_embd: "width", lr: "learning rate" })[r.axis]}</td><td>${r.value}</td><td class="num">${fmt(r.best_val_loss)}</td><td class="num">${(r.params / 1e6).toFixed(2)}M</td></tr>`).join("");
   }
 
   /* ---------- Samples & merges ------------------------------------------ */
   const samples = $("#samples");
-  if (samples) samples.innerHTML = D.samples.map((s) => `<pre class="sample">${escapeHtml(s.trim())}</pre>`).join("");
+  if (samples) samples.innerHTML = D.samples.slice(0, 1).map((s) => `<pre class="sample">${escapeHtml(s.trim())}</pre>`).join("");
   const merges = $("#merges");
   if (merges) merges.innerHTML = D.merges_preview.map((m, i) => `<li title="merge #${i}, token id ${256 + i}"><code>${escapeHtml(vis(m))}</code></li>`).join("");
 
