@@ -85,6 +85,104 @@ document.addEventListener('DOMContentLoaded', () => {
     // Featured Projects (Instant Code Connect permanently removed)
     const projects = [
         {
+            title: "SATELLITE GROUND STATION",
+            tag: "C++20 / SYSTEMS / NETWORKING",
+            image: "pictures/ground-station-demo.png",
+            fit: "cover",
+            position: "center top",
+            platform: "C++20, Linux, UDP / POSIX sockets, epoll",
+            type: "Concurrent Telemetry Pipeline / Custom Binary Protocol",
+            format: "CMake, GoogleTest, ThreadSanitizer, tc netem",
+            description: "A Linux ground station that ingests simulated satellite telemetry over UDP, validates every frame with CRC-32, and detects dropped, duplicate, and out-of-order packets. An epoll receive thread feeds workers through lock-free SPSC ring buffers.",
+            primaryLink: "projects/ground-station.html",
+            primaryText: "CASE STUDY + LIVE DEMO",
+            detailsHtml: `
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// SATELLITE TELEMETRY GROUND STATION</h4>
+                <p style="margin-bottom: 1rem;">A C++20 Linux service that receives simulated spacecraft telemetry over UDP and accounts for every packet that was dropped, duplicated, or reordered, per subsystem.</p>
+                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;">
+                    <div>> Pipeline: edge-triggered epoll + recvmmsg → lock-free SPSC ring per worker, sharded by subsystem</div>
+                    <div>> Protocol: little-endian binary framing, sequence numbers, CRC-32 (every single-bit flip rejected, tested)</div>
+                    <div>> Verified: 48 GoogleTest tests under ThreadSanitizer + AddressSanitizer in CI</div>
+                    <div>> Degraded link: 5% loss injected with tc netem → 5.07% measured</div>
+                </div>
+                <div style="margin-top: 1.4rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="projects/ground-station.html" class="btn-solid" style="display: inline-flex;">
+                        <span>OPEN CASE STUDY</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                    <a href="https://github.com/Eddieeq7/satellite-ground-station" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
+                        <span>SOURCE</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                </div>
+            `
+        },
+        {
+            title: "SKILLCAST (ROGER)",
+            tag: "RUST / MACOS / EVENT-DRIVEN",
+            image: "pictures/roger-today.jpg",
+            fit: "cover",
+            position: "left top",
+            platform: "Rust, TypeScript, Node, Electron, SQLite — macOS",
+            type: "Local-First Desktop Agent / Real-Time Capture Pipeline",
+            format: "Signed macOS app, used by ~200 people",
+            description: "I own the Rust capture core of a local-first macOS agent: a real-time pipeline that coalesces raw keystrokes into semantic events and commits them to an append-only SQLite write-ahead log, with privacy enforced before anything touches disk.",
+            primaryLink: "https://github.com/oaisis-dev/roger-releases",
+            primaryText: "DOWNLOAD ROGER",
+            detailsHtml: `
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// SKILLCAST (ROGER) — RUST CAPTURE CORE</h4>
+                <p style="margin-bottom: 1rem;">Roger watches how you work on your Mac, learns repeated tasks as editable skills, and runs them for you. Everything stays on the machine. I own the Rust capture core that everything else is built on.</p>
+                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;">
+                    <div>• Real-time event pipeline that coalesces raw keystrokes into semantic events and commits them to an append-only SQLite write-ahead log.</div>
+                    <div style="margin-top: 0.5rem;">• Replaced a 300 ms polling thread with an event-driven kqueue (EVFILT_VNODE) watcher, cutting ~3.3 idle wakeups/s to zero and removing steady-state CPU load from the daemon's health path.</div>
+                    <div style="margin-top: 0.5rem;">• Privacy at the capture edge: app denylist, secure-field masking, and PII redaction before any write, so cleartext never reaches disk. Verified with 130+ Rust and TypeScript unit/integration tests.</div>
+                </div>
+                <img src="pictures/roger-skills.jpg" alt="Roger's Skills screen: skills learned from repeated demonstrations, each set to ask before running" style="width: 100%; border: 1px solid var(--border-subtle); margin-bottom: 0.4rem;">
+                <p style="color: var(--text-secondary); font-size: 0.78rem; font-family: var(--font-mono);">The shipped app: skills Roger learned from demonstrations, each gated to ask first.</p>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.8rem;">Source is private to the company; signed, notarized builds are public.</p>
+                <div style="margin-top: 1.4rem;">
+                    <a href="https://github.com/oaisis-dev/roger-releases" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
+                        <span>RELEASES</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                </div>
+            `
+        },
+        {
+            title: "SMALL LANGUAGE MODEL",
+            tag: "PYTORCH / TRANSFORMERS",
+            image: "pictures/slm-attention.png",
+            fit: "cover",
+            position: "center top",
+            platform: "Python, PyTorch (CUDA / Apple MPS / CPU)",
+            type: "Decoder-Only Transformer, Built From Scratch",
+            format: "BPE Tokenizer, Multi-Head Attention, Training Loop, Sweep",
+            description: "A GPT-style decoder-only transformer written without library attention or a pretrained tokenizer: byte-level BPE, hand-written causal multi-head attention, and a training loop tuned on context length, embedding size, and learning rate against validation loss.",
+            primaryLink: "projects/small-language-model.html",
+            primaryText: "CASE STUDY + ATTENTION MAPS",
+            detailsHtml: `
+                <h4 style="font-family: var(--font-mono); color: #00f0ff; margin-bottom: 0.8rem;">// SMALL LANGUAGE MODEL FROM SCRATCH</h4>
+                <p style="margin-bottom: 1rem;">Every piece of a GPT-style model, implemented and tested by hand, then trained and tuned on held-out validation loss.</p>
+                <div style="background: #050505; border: 1px solid var(--border-subtle); padding: 1rem; margin-bottom: 1rem; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;">
+                    <div>> Tokenizer: byte-level BPE trained on the corpus</div>
+                    <div>> Attention: hand-written causal multi-head, tested equal to PyTorch's fused kernel</div>
+                    <div>> Model: 3.29M params, 4 layers × 4 heads, best val loss 2.793</div>
+                    <div>> Sweep: context length, embedding size, learning rate</div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem;">The case study lets you explore the trained model's real attention weights per layer and head.</p>
+                <div style="margin-top: 1.4rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="projects/small-language-model.html" class="btn-solid" style="display: inline-flex;">
+                        <span>OPEN CASE STUDY</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                    <a href="https://github.com/Eddieeq7/small-language-model" target="_blank" rel="noopener" class="btn-solid" style="display: inline-flex;">
+                        <span>SOURCE</span>
+                        <span class="btn-arrow">↗</span>
+                    </a>
+                </div>
+            `
+        },
+        {
             title: "INVOICE MCP READER",
             tag: "AI / MCP PROTOCOL",
             image: "pictures/invoice-tool.jpg",
@@ -371,6 +469,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateShowcaseDisplay('next');
         });
     }
+
+    // Render the first item from data so the static HTML can't drift from the list.
+    updateShowcaseDisplay('next');
 
     if (mediaFrame) {
         mediaFrame.style.cursor = 'pointer';
